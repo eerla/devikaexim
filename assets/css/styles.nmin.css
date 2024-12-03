@@ -1,0 +1,2332 @@
+/* General reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f8f8f8;
+    color: #333;
+    line-height: 1.6;
+    /* display: flex; */ /*this messes up first page*/ 
+}
+
+.container {
+    display: flex;
+    padding-top: 20px; /* Space for the fixed navbar */
+}
+
+
+/* Sidebar styling */
+.sidebar {
+    width: 250px;
+    background-color: #333;
+    padding: 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    border-right: 3px solid #D21818;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 999; /* Ensure it's on top of other elements */
+    overflow-y: auto; /* If the content overflows */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center the content horizontally */
+}
+
+.sidebar .logo {
+    text-align: center;
+    margin-bottom: 10px;
+    padding: 0px;
+}
+
+.sidebar .logo-img {
+    width: 120px;
+    margin-bottom: 0px;
+}
+
+.sidebar-title {
+    font-size: 1.5rem;
+    color: #ffffff;
+    margin: 10px 0;
+    line-height: 1.2; /* Ensure consistent line height */
+    padding: 0; /* Remove any padding */
+}
+
+.sidebar-title span {
+    color: #D21818; /* Brand color */
+}
+
+.sidebar nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+.sidebar nav ul li {
+    margin: 15px 0; /* Consistent margin between items */
+}
+
+.sidebar nav ul li a {
+    text-decoration: none;
+    color: #fff;
+    font-size: 1rem;
+    display: block;
+    padding: 12px 20px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.sidebar nav ul li a:hover, .nav-link.active {
+    background-color: #D21818;
+    color: #fff;
+    border-radius: 5px;
+}
+
+
+/* Navbar section styling */
+.navbar {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.navbar .navbar-brand span {
+    color: #D21818;
+}
+
+.navbar .navbar-buttons a {
+    color: #D21818;
+    font-size: 1rem;
+}
+
+.navbar .navbar-buttons a:hover {
+    color: #fff;
+    background-color: #D21818;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    /* .sidebar {
+        width: 80px;
+    } */
+
+    /* .content {
+        margin-left: 100px;
+        padding: 20px;
+    } */
+}
+
+.ordernow-button {
+    position: fixed;
+    bottom: 100px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background-color: #ffffff; /* WhatsApp Brand Color */
+    border-radius: 50%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.3s ease;
+    z-index: 1000;
+}
+
+.ordernow-button:hover {
+    transform: scale(1.2);
+    transform-origin: center;
+}
+
+.ordernow-button img {
+    width: 40px;
+    height: 40px;
+}
+
+ /* WhatsApp Button Styling */
+ .whatsapp-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background-color: #25D366; /* WhatsApp Brand Color */
+    border-radius: 50%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.3s ease;
+    z-index: 1000;
+}
+
+.whatsapp-button:hover {
+    transform: scale(1.1);
+}
+
+.whatsapp-button img {
+    width: 40px;
+    height: 40px;
+}
+
+
+.header12 {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.header12 h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+.header12 p {
+    font-size: 1.2rem;
+    text-align: justify;
+}
+
+/* whychooseus */
+/* Container for the section */
+.whychooseus-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    position: relative;
+}
+
+/* Title Styling */
+.whychooseus {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #ff6b6b; /* Use the red color */
+    text-align: center; /* Center align the text */
+    margin: 10px; /* Center the element horizontally with auto margins */
+    padding: 15px 20px; /* Add padding for better spacing */
+    letter-spacing: 1px; /* Adjust letter spacing */
+    text-transform: uppercase; /* Capitalize the text for emphasis */
+    position: relative; /* Required for the pseudo-elements */
+    display: block; /* Make it a block-level element to take full width */
+    background: transparent; /* Transparent to see background image */
+    border-radius: 12px; /* Slightly rounded corners */
+    transition: all 0.3s ease; /* Smooth hover effect */
+    width: fit-content; /* Ensure width adjusts based on content */
+    margin-left: auto; /* Center horizontally */
+    margin-right: auto; /* Center horizontally */
+  
+    /* Create a subtle shadow effect */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin-bottom: 30px;
+    /* Add a gradient border */
+    /* background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 107, 107, 0.15) 100%); */
+    /* background-clip: padding-box; */
+}
+
+
+  
+  .whychooseus:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    background: rgba(156, 156, 156, 0.1); /* Subtle background highlight */
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s ease;
+    border-radius: 12px; /* Match border radius */
+  }
+  
+  .whychooseus:hover {
+    color: #5f5f5f; /* Invert text color on hover */
+    border-color: #ff6b6b; /* Change border color */
+    background: linear-gradient(90deg, rgba(255, 107, 107 0.6) 0%, rgba(255, 107, 107 0) 100%);
+  }
+  
+  .whychooseus:hover:before {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+  
+  /* Container for the cards */
+/* .badges-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin: 20px;
+} */
+/* Responsive adjustments */
+@media (max-width: 786px) {
+    .card {
+        width: auto; /* Smaller width on mobile */
+        height: 180px; /* Smaller height on mobile */
+    }
+}
+
+@media (max-width: 400px) {
+    .card {
+        width: auto; /* Compact width for very small screens */
+        height: 150px; /* Compact height for very small screens */
+    }
+}
+
+.badges-container {
+    scrollbar-width: thin;
+    display: flex; 
+    overflow-x: auto; 
+    padding: 10px; 
+    gap: 20px; /* Space between cards */
+    scroll-snap-type: x mandatory; 
+    max-width: 100%; /* Prevent overflow */
+    box-sizing: border-box; /* Include padding in width calculation */
+}
+
+/* Optional: Add styles for a better visual experience */
+.badges-container::-webkit-scrollbar {
+    height: 8px; /* Height of the scrollbar */
+}
+
+.badges-container::-webkit-scrollbar-thumb {
+    background: #888; /* Color of the scrollbar thumb */
+    border-radius: 4px; /* Round scrollbar thumb */
+}
+
+.badges-container::-webkit-scrollbar-thumb:hover {
+    background: #555; /* Darker color on hover */
+}
+
+html, body {
+    overflow-x: hidden; /* Prevent horizontal scrolling on the body */
+}
+
+.badges-row {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 20px;
+}
+
+.card {
+    text-align: center;
+    flex: 0 0 calc(50% - 10px); /* Card width */
+    border-radius: 12px; /* Rounded corners */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+    background-color: #fff; /* White background */
+    transition: transform 0.2s; /* Smooth transform */
+    scroll-snap-align: start; 
+    padding: 15px; /* Inner padding */
+    height: auto;
+}
+
+
+/* Card Title Styling */
+.card h5 {
+    color: #333;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.card:active {
+    cursor: grabbing; /* Change cursor when dragging */
+}
+
+/* Card Text Styling */
+.card p {
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+}
+
+/* Icon Block Styling */
+.icon-block {
+    margin-bottom: 15px;
+}
+
+.icon-block .material-symbols-outlined {
+    font-size: 80px;
+    color: #E57373;
+}
+
+
+
+@media (max-width: 403px) {
+    .intro-content .centered-heading h1 {
+        font-size: 15px; /* Scale the font size relative to the viewport width */
+        letter-spacing: 1px; /* Reduce letter-spacing for smaller screens */
+        line-height: 1.1; /* Slightly reduce line-height for better fit */
+        padding: 5px 0; /* Adjust padding to prevent overflow */
+        margin-top: 0px;
+    }
+
+    .tagline p {
+        font-size: 18px; /* Adjust font size for smaller screens */
+        letter-spacing: 0.5px; /* Reduce letter spacing */
+        line-height: 1.4; /* Ensure readability */
+        padding: 20px;
+        margin-top: 20px;
+        color: #d21414;
+    }
+
+    .card {
+        background: #fff;
+        border-radius: 10px;
+        padding: 10px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        /* position: relative;
+        flex: 1;
+        min-width: 250px; */
+    }
+    
+    /* Card Title Styling */
+    .card h5 {
+        color: #333;
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+    
+    /* Card Text Styling */
+    .card p {
+        color: #666;
+        font-size: 0.95rem;
+        line-height: 1.4;
+    }
+
+    .intro-content .intro-text span {
+        font-size: 25px; /* Reduce font size for readability on smaller screens */
+        line-height: 1.5; /* Line spacing for better readability */
+        margin: 15px 0; /* Add margin for spacing between paragraphs */
+    }
+
+    .n-btn {
+        font-size: 0.9rem;
+        padding: 8px 5px;
+        border-radius: 8px; /* More rounded corners */
+        text-decoration: none;
+        color: #fff;
+        display: inline-block; /* Better alignment and spacing */
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Deeper shadow for more depth */
+        transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transitions */
+        text-align: center;
+    
+    }
+}
+
+@media (max-width: 768px) {
+
+    .intro-content .intro-text span {
+        font-size: 25px; /* Reduce font size for readability on smaller screens */
+        line-height: 1.5; /* Line spacing for better readability */
+        margin: 15px 0; /* Add margin for spacing between paragraphs */
+    }
+
+    /* Heading styling */
+    .intro-content .centered-heading h1 {
+        font-size: 50px; /* Adjust font size for mobile screens */
+        line-height: 1.2; /* Reduce line spacing for mobile */
+        margin: 0px;
+        padding-top: 0px;
+    }
+
+    .intro-content .centered-heading h1 span {
+        display: block; /* Ensure spans (like Red) are on new lines */
+        font-size: 22px; /* Adjust span font size */
+    }
+
+    /* Red underline for "Red" */
+    .centered-heading h1 .underline {
+        display: block; /* Ensures the underline spans the width */
+        margin: 5px auto 0 auto; /* Adds spacing around underline */
+        width: 60px;
+        height: 4px;
+        background-color: #d21414; /* Red underline color */
+    }
+
+}
+/* headings */
+/* Center the heading container in the page */
+.centered-heading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 20vh; /* Adjust to the desired height */
+    text-align: center;
+    padding: 10px; /* Optional: Add padding for responsiveness */
+}
+
+
+.centered-heading h1 {
+    font-size: 4rem;
+    font-weight: 900;
+    color: #333;
+    margin-bottom: 0px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    line-height: 1.2;
+    position: relative;
+    display: inline-block;
+    padding: 10px 0;
+}
+
+.centered-heading h1 span {
+    color: #d21414;
+    font-weight: bolder;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+
+.centered-heading h1 .underline {
+    /* position: fixed; */
+    bottom: 10px;
+    margin-bottom: 25px;
+    margin-top: 15px;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(to right, #d21414, #d21414);
+    content: '';
+    display: block;
+}
+
+/* .media-container {
+    width: 100%;
+} */
+
+.intro-content {
+    text-align: center;
+}
+
+.tagline {
+    font-size: 25px;
+    color: #d21414;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    line-height: 2rem;
+    position: relative;
+    display: block;
+    text-align: center;
+    /* justify-content: center;
+    align-items: center; */
+    padding: 5px;
+    margin: 10px auto; /* Center it */
+    max-width: 100%; /* Ensure it doesn’t overflow */
+    /* box-sizing: border-box; */
+}
+
+@media (max-width: 768px) {
+    
+
+    .tagline {
+        font-size: 18px; /* Adjust font size for smaller screens */
+        letter-spacing: 0.5px; /* Reduce letter spacing */
+        line-height: 1.4; /* Ensure readability */
+        padding: 20px;
+        margin-top: 20px;
+    }
+
+    .intro-text p {
+        font-size: 16px; /* Reduce font size for readability on smaller screens */
+        line-height: 1.5; /* Line spacing for better readability */
+        margin: 15px 0; /* Add margin for spacing between paragraphs */
+    }
+
+    .intro-text p span {
+        font-size: 16px; /* Reduce font size for readability on smaller screens */
+        line-height: 1.5; /* Line spacing for better readability */
+        margin: 15px 0; /* Add margin for spacing between paragraphs */
+    }
+
+    .tagline p {
+        font-size: 24px; /* Adjust font size for smaller screens */
+        color: #d21414; /* Softer text color */
+        margin: 0; /* Remove any default margins */
+        text-align: center;
+    }
+
+    .intro-content {
+        text-align: center;
+        padding: 10px;
+    }
+
+}
+
+
+/* Intro text styling */
+.intro-text {
+    text-align: center;
+    /* padding-top: 80px;
+    padding-left: 50px;
+    padding-right: 50px; */
+    width: 100%;
+}
+
+.intro-text p {
+    font-size: 20px;
+    color: #666;
+    line-height: 1.6;
+}
+
+.intro-text p span{
+    color: #d21414;
+}
+
+
+/* product_description */
+.product-section {
+    padding: 0px;
+    margin-left: 0px; /* Adjust for sidebar */
+}
+
+.product-container {
+    display: grid;
+    grid-template-columns: repeat(1, 5fr);
+    gap: 0px;
+    margin-top: 10px;
+    padding: 0px;
+}
+
+.product-card {
+    display: flex;
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 10px;
+    width: 100%;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 40px;
+    margin-top: 15px;
+}
+
+.product-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.product-img img {
+    width: 250px;
+    height: 300px;
+    object-fit: cover;
+    margin: 5px;
+}
+
+/* width: 300px; height: 400px; object-fit: cover; */
+
+.product-info {
+    flex: 1;
+    padding: 0px;
+}
+
+.product-title {
+    font-size: 2rem;
+    color: #d21818;
+    margin-bottom: 10px;
+    text-align: center;
+    width: 100%;
+}
+
+.product-description {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.product-features {
+    list-style: none;
+    padding-left: 0;
+    color: #333;
+}
+
+.product-features li {
+    font-size: 15px;
+    margin-bottom: 1px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .product-container {
+        grid-template-columns: 1fr;
+    }
+
+    .product-card {
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 50px;
+    }
+
+    .product-img img {
+        margin-bottom: 10px;
+    }
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 768px) {
+    .team-item {
+        flex-basis: 45%; /* Two cards per row on smaller screens */
+    }
+}
+
+@media (max-width: 576px) {
+    .team-item {
+        flex-basis: 100%; /* One card per row on small screens */
+    }
+}
+
+/* about us */
+
+/* Team Section Styles */
+
+
+.media-row {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    width: 100%;
+    max-width: 1200px;
+}
+
+
+/* new about us */
+h2, h3 {
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+}
+
+
+/* Redesigned About Section */
+.about-section {
+    max-width: 1100px;
+    margin: 0 auto 60px auto;
+    padding: 60px 30px;
+    text-align: left;
+    background-color: #fff;
+    border-left: 6px solid #d21414; /* Accent border */
+    border-radius: 8px;
+    line-height: 1.8;
+    font-size: 1.1rem;
+    color: #333;
+    transition: all 0.3s ease; /* Smooth transition on hover */
+}
+
+.about-section:hover {
+    transform: translateY(-5px); /* Subtle hover effect */
+}
+
+/* Heading Styling */
+.about-section .about-content h2 {
+    font-size: 2rem;
+    color: #d21414;
+    margin-bottom: 5px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+/* Subheading Styling */
+.about-section .about-content p.subheading {
+    font-size: 1.4rem;
+    color: #444;
+    line-height: 1.8;
+    margin: 0 auto 25px;
+    max-width: 850px;
+}
+
+/* Description Styling */
+.about-section .about-content p.description {
+    font-size: 1.2rem;
+    color: #555;
+    line-height: 1.6;
+    margin: 0 auto;
+    max-width: 850px;
+}
+
+/* Accent elements */
+.about-section span {
+    color: #eb2f2f;
+    font-weight: bold;
+}
+
+/* Divider between sections */
+.about-section .divider {
+    width: 100px;
+    height: 4px;
+    background-color: #d21414;
+    margin: 30px auto;
+    border-radius: 2px;
+}
+
+
+
+
+
+.highlight {
+    color: #eb2f2f;
+}
+
+/* Core Members Section */
+.core-members {
+    text-align: center;
+    justify-content: center;
+    /* align-items: center; */
+}
+
+.core-members .section-title {
+    font-size: 2.5rem;
+    color: #333;
+}
+
+.core-members .history .section-subtitle {
+    font-size: 1.25rem;
+    color: #666;
+    line-height: 1.8;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+
+
+.history {
+    margin-top: 50px;
+    text-align: center;
+}
+
+.history p {
+    margin-left: 150px;
+    margin-right: 150px;
+    font-size: 1.5rem;
+}
+
+.history h3 {
+    font-size: 2rem;
+}
+
+.team-section {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.team-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.team-item {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    text-align: center;
+    margin: 10px;
+}
+
+.market-prices {
+    display: none;
+}
+
+.item-caption {
+    margin-top: 15px;
+}
+
+.name-text {
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #eb2f2f;
+}
+
+
+.item-role {
+    font-size: 1rem;
+    color: #333;
+}
+
+/* Responsive Design for Mobile */
+@media screen and (max-width: 768px) {
+    /* Team Section Mobile Scaling */
+    .team-row {
+        display: block;
+        text-align: center;
+    }
+
+    .team-item {
+        width: 90%;
+        margin: 10px auto;
+    }
+}
+
+/* Mobile-Optimized About Section */
+@media screen and (max-width: 768px) {
+
+    .about-section {
+        max-width: 100%; /* Reduce width to fit mobile screens */
+        padding: 40px 20px; /* Adjust padding for smaller devices */
+        margin: 0px auto; /* Ensure proper margin on smaller screens */
+        font-size: 1rem; /* Slightly reduce font size for readability */
+    }
+
+    .about-section:hover {
+        transform: none; /* Disable hover effect for mobile */
+    }
+
+    /* Heading Styling */
+    .about-section .about-content h2 {
+        font-size: 1rem; /* Reduce heading size for mobile */
+        margin-bottom: 0px; /* Adjust margin for mobile */
+    }
+
+    .about-section .about-content h1 {
+        font-size: 2rem; /* Reduce heading size for mobile */
+        margin-bottom: 0px; /* Adjust margin for mobile */
+    }
+
+    /* Subheading Styling */
+    .about-section .about-content p.subheading {
+        font-size: 1.2rem; /* Smaller font size for subheading */
+        line-height: 1.6; /* Adjust line height for readability */
+        margin-bottom: 20px; /* Adjust margin for mobile */
+        max-width: 100%; /* Full width for text blocks */
+    }
+
+    /* Description Styling */
+    .about-section .about-content p.description {
+        font-size: 1rem; /* Reduce font size slightly */
+        line-height: 1.5; /* Reduce line height */
+        margin: 0 auto;
+        max-width: 100%; /* Full width for text blocks */
+    }
+
+    /* Divider between sections */
+    .about-section .divider {
+        width: 70px; /* Shorter divider for mobile */
+        height: 3px;
+        margin: 20px auto; /* Adjust margin */
+    }
+}
+
+.custom-order-info {
+    font-size: 1.1rem; /* Readable font size */
+    font-weight: 600; /* Bold text */
+    line-height: 1.6; /* Improve readability */
+    color: #fff; /* White text for contrast */
+    background: #4d4c4c; /* Black background for a bold look */
+    border-radius: 12px; /* Rounded corners for a sleek feel */
+    border: 2px solid #ffcc00; /* Yellow border for a striking outline */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Add depth with a subtle shadow */
+    max-width: 90%; /* Keep it responsive */
+    margin: 20px auto; /* Center the section */
+    text-align: center; /* Center the text */
+    padding: 20px 30px; /* Add enough padding for good spacing */
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.custom-order-info:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -50px;
+    width: 150%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.1); /* Light reflection for style */
+    transform: skewX(-30deg);
+    transition: 0.5s ease;
+    z-index: 0;
+}
+
+.custom-order-info:hover:before {
+    left: 100%; /* Move the light streak across the box on hover */
+}
+
+.custom-order-info:hover {
+    transform: scale(1.02); /* Slight enlargement on hover */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); /* Darker shadow on hover */
+    border-color: #ffcc00; /* Keep the yellow border on hover */
+}
+
+/* Optional: Adding a yellow streak at the top of the box */
+.custom-order-info::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 5px; /* A thin streak */
+    width: 100%;
+    background: #ffcc00; /* Yellow streak */
+    z-index: 2;
+}
+
+
+
+
+.n-mbr-section-btn {
+    display: flex;
+    justify-content: center;
+    gap: 80px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+
+.n-btn {
+    font-size: 1.125rem;
+    padding: 15px 30px;
+    border-radius: 8px; /* More rounded corners */
+    text-decoration: none;
+    color: #fff;
+    display: inline-block; /* Better alignment and spacing */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Deeper shadow for more depth */
+    transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transitions */
+    text-align: center;
+
+}
+
+
+.n-btn:hover {
+    color: #fff;
+}
+
+/* Button for 'Place Order Now' */
+.n-place-order-btn {
+    background: linear-gradient(45deg, #d21414, #ff6b6b); /* Gradient background */
+}
+
+.n-place-order-btn:hover {
+    background: linear-gradient(45deg, #ff6b6b, #d21414);
+    transform: scale(1.05);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* Button for 'Check Today's Prices' */
+.n-check-prices-btn {
+    background: linear-gradient(45deg, #333, #555); /* Gradient background */
+}
+
+.n-check-prices-btn:hover {
+    background: linear-gradient(45deg, #555, #333);
+    transform: scale(1.05);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+}
+
+
+
+
+
+.order-btn {
+    background-color: #d61818;
+    border: none;
+    color: #fff;
+    font-size: 1.25rem;
+    padding: 12px 28px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.order-btn:hover {
+    background-color: #b71515;
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.order-note {
+    font-size: 0.85rem;
+    color: #555;
+    margin-top: 10px;
+}
+
+.text-center {
+    text-align: center; /* Centers the text */
+    font-style: italic; /* Italicizes the text */
+    font-size: 24px; /* Adjust the size as needed */
+    font-weight: bolder; /* Makes the text bold */
+    letter-spacing: 1px; /* Adds space between the letters */
+    color: #333; /* Sets the text color (you can customize this) */
+    margin-bottom: 20px; /* Adds space below the heading */
+}
+
+
+button, img {
+    outline: none; /* Removes default outline when clicked */
+  }
+
+button:focus, img:focus {
+outline: none; /* Ensures there's no outline when the element is focused */
+}
+
+/* sidebar mobielview */
+
+@media screen and (max-width: 768px) {
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%; /* Full width on mobile */
+        height: 80px; /* Fixed height for the ribbon */
+        background-color: #fff; /* Background color of the ribbon */
+        display: flex;
+        justify-content: space-between; 
+        align-items: center; /* Vertically align logo and buttons */
+        z-index: 9999; /* Keep on top of the page content */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Add shadow for depth */
+        padding: 0 5px; /* Add some padding on the sides */
+        box-sizing: border-box; /* Ensure padding doesn't increase height */
+        overflow: hidden; /* Prevent any internal scroll */
+    }
+
+    .sidebar .logo {
+        text-align: center;
+        margin-bottom: 0px;
+        padding: 0px;
+        position: fixed;
+        /* display: none; */
+    }
+
+    /* Adjust logo size and align to the left */
+    .sidebar .logo-img {
+        height: 40px; /* Adjust the logo size to fit the ribbon height */
+        width: auto;
+        margin-right: 0px; /* Add small space between logo and buttons */
+    }
+
+    /* Hide the title on mobile */
+    .sidebar-title {
+        display: none; /* Hide sidebar title on smaller screens */
+    }
+
+    /* Navigation styles */
+    .sidebar nav ul {
+        display: flex;
+        justify-content: space-between; /* Align the navigation buttons to the right */
+        gap: 15px; /* Add space between buttons */
+        margin: 0px;
+        
+        list-style: none;
+        width: auto;
+        flex-wrap: nowrap;
+    }
+
+    .sidebar nav ul li {
+        list-style: none;
+        margin: 0 auto;
+        padding: 0px;
+        flex-grow: 1; /* Make each list item take up equal space */
+        text-align: center; /* Center the text inside each list item */
+    }
+
+    .sidebar nav {
+        padding-top: 40px;
+        position: static;
+    }
+
+    .sidebar nav ul li a {
+        font-size: 14px; /* Adjust font size for mobile */
+        font-weight: 700;
+        padding: 0px;
+        display: block;
+        text-transform: uppercase;
+        text-align: center;
+        text-decoration: none;
+        color: #333; /* Button text color */
+    }
+
+    .sidebar nav ul li a:hover, .nav-link.active {
+        background-color: #ffffff;
+        color: #f70000;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+}
+
+/* Desktop View - Default Styles */
+.main-content {
+    margin-left: 200px; /* Leaves space for the sidebar */
+    /* padding: 20px; */
+    width: calc(100% - 200px); /* Main content takes up the remaining space */
+    transition: margin-left 0.3s ease, width 0.3s ease; /* Smooth transition */
+    min-height: 100vh; /* Ensure the main content fills at least the viewport height */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Push content down if needed */
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  
+  /* Media Query for Mobile View */
+@media screen and (max-width: 768px) {
+    .main-content {
+        margin-left: 0; /* No left margin since sidebar is now at the top */
+        width: 100%; /* Main content takes full width */
+        padding-top: 100px; /* Add padding to account for the height of the sidebar ribbon */
+        
+    }
+
+    .n-media-container {
+        background: url('images/logo-d3.png') no-repeat center center; 
+        background-size: contain; 
+        color: #333;
+        margin-top: 30px;
+    }
+    
+}
+
+.n-media-container {
+    background: url('images/logo-d3.png') no-repeat center center; 
+    background-size: contain; 
+    color: #333;
+    width: 100%;
+}
+
+.n-media-container-row {
+    padding: 30px; 
+    background-color: #f5f5f5; 
+    text-align: center; 
+    border-radius: 10px; /* Optional: add a slight border-radius for a modern look */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Optional: add a shadow to make the section pop */
+}
+
+.n-media-container-row h1 {
+    font-size: 2.5rem; 
+    font-weight: 700; 
+    color: #d21414; 
+    margin-bottom: 5px; 
+    position: relative; 
+    display: inline-block;
+}
+
+.n-media-container-row h2 {
+    font-size: 2.5rem; 
+    font-weight: 700; 
+    color: #d21414; 
+    margin-bottom: 5px; 
+    position: relative; 
+    display: inline-block;
+}
+
+.n-media-container-row h1 span {
+    background: linear-gradient(to right, #E57373, #E57373); 
+    -webkit-background-clip: text; 
+    color: transparent;
+}
+
+.n-media-container-row h2 span {
+    background: linear-gradient(to right, #E57373, #E57373); 
+    -webkit-background-clip: text; 
+    color: transparent;
+}
+
+.n-media-container-row p {
+    font-size: 1.2rem; 
+    color: #555; 
+    font-weight: 400; 
+    margin-top: 2px;
+}
+
+.n-media-container-row p span {
+    font-size: 1rem; 
+    font-style: italic; 
+    color: #777;
+}
+
+/* new contact us  */
+/* General Info Section Styling */
+.info-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    background-color: #f7f8fa;
+    padding: 50px;
+    gap: 50px;
+    flex-wrap: wrap; /* Allow wrapping for mobile view */
+}
+
+/* Left Section Styling */
+.left-section {
+    text-align: center;
+    color: #eb2f2f;
+    flex: 1;
+}
+
+.left-section h1 {
+    font-size: 1.6rem;
+    font-weight: bold;
+    line-height: 1.4;
+    margin: 0;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.1));
+    display: inline-block;
+}
+
+/* Right Section Styling */
+.right-section {
+    text-align: left;
+    flex: 1;
+    color: #333;
+}
+
+.right-section h5 {
+    font-size: 1.125rem;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.right-section p {
+    font-size: 1rem;
+    color: #555;
+}
+
+.right-section a {
+    color: #d61818;
+    text-decoration: none;
+}
+
+.right-section a:hover {
+    text-decoration: underline;
+}
+
+/* Mobile Optimization */
+@media (max-width: 768px) {
+    .info-section {
+        flex-direction: column; /* Stack sections vertically */
+        padding: 20px;
+    }
+
+    .left-section h1 {
+        font-size: 1.4rem; /* Adjust font size for smaller screens */
+        padding: 15px;
+    }
+
+    .right-section h5 {
+        font-size: 1rem; /* Reduce font size */
+    }
+
+    .right-section p {
+        font-size: 0.9rem;
+    }
+}
+
+
+/* Contact Us Section Styling */
+
+/* Mobile view: Stacks the columns vertically */
+@media (max-width: 768px) {
+    .contact-row {
+        flex-direction: column;
+        gap: 20px;
+    }
+}
+
+/* Desktop view: Aligns the columns side by side */
+.contact-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Creates two equal-width columns */
+    gap: 20px; /* Optional: Space between the two divs */
+}
+
+.social-map-column, .contact-column {
+    padding: 20px;
+}
+
+.media-row {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 20px;
+}
+
+.social-link {
+    text-align: center;
+}
+
+/* Button and Icon Styling */
+.social-btn {
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    outline: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.social-btn img {
+    width: 90px;
+    height: 90px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.social-btn:hover img, .email-btn:hover img, .whatsapp-btn:hover img {
+    transform: scale(1.1);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+}
+
+
+.whatsapp-btn:focus,
+.whatsapp-btn:active,
+.email-btn:focus,
+.email-btn:active,
+.social-btn:focus,
+.social-btn:active {
+    outline: none; /* Remove outline on focus and active states */
+    box-shadow: none; /* Ensure no box shadow appears either */
+}
+
+.gradient-text {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.instagram-text {
+    background: linear-gradient(to right, #FF6A00, #EE0979);
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+.facebook-text {
+    background: linear-gradient(to right, #0084FF, #00C6FF);
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+/* Google Map Styling */
+.google-map {
+    border-radius: 8px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    margin-top: 20px;
+}
+
+.google-map iframe {
+    border: none;
+    width: 100%;
+    height: 450px;
+}
+
+/* Button Styling */
+.order-btn, .email-btn, .whatsapp-btn {
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    outline: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.order-btn {
+    padding: 10px 20px;
+    background-color: #eb2f2f;
+    color: white;
+    border-radius: 5px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.contact-enquiry, .contact-whatsapp {
+    margin-top: 30px;
+}
+
+.email-btn img, .whatsapp-btn img {
+    width: 90px;
+    height: 90px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+
+/* Banner styling */
+.banner-container {
+    width: 100%;
+    background-color: #f5f5f5;
+    padding: 20px;
+    cursor: pointer;
+    text-align: center;
+    position: relative;
+    transition: background-color 0.3s ease;
+}
+
+.banner-container:hover {
+    background-color: #e0e0e0;
+}
+
+.banner-content h2 {
+    font-size: 1.5rem;
+    margin: 0;
+    display: inline-block;
+}
+
+.banner-content .arrow-up,
+.banner-content .arrow-down {
+    display: inline-block;
+    margin-left: 10px;
+    width: 0; 
+    height: 0; 
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    transition: transform 0.3s ease;
+}
+
+/* Arrow styles */
+.arrow-up {
+    border-bottom: 10px solid #333; /* Upward arrow */
+}
+
+.arrow-down {
+    border-top: 10px solid #333; /* Downward arrow */
+}
+
+/* Image container */
+.image-container {
+    width: 100%;
+    text-align: center;
+    padding: 0px;
+    background-color: #ffffff;
+    transition: max-height 0.4s ease;
+    overflow: hidden;
+}
+
+.image-container img {
+    width: 100%;
+    max-height: 100%;
+    object-fit: cover;
+}
+
+
+/* Media Query for mobile responsiveness */
+@media screen and (max-width: 600px) {
+    .banner-container {
+        padding: 15px;
+        margin-top: 25px;
+        
+    }
+
+    .banner-content h2 {
+        font-size: 1.2rem;
+    }
+
+    .image-container img {
+        width: 100%; /* Ensure image scales for smaller screens */
+    }
+}
+
+/* Media Query for mobile responsiveness */
+@media screen and (max-width: 768px) {
+    .banner-container {
+        padding: 15px;
+        margin-top: 25px;
+
+    }
+
+    .banner-content h2 {
+        font-size: 1.2rem;
+    }
+
+    .image-container img {
+        width: 100%; /* Ensure image scales for smaller screens */
+    }
+
+    .blog-button {
+        display: none;
+    }
+}
+
+/*our blog*/
+/* Styling the table */
+.prices-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Arial', sans-serif;
+    color: #333;
+    margin: 0 0;
+    border: 2px solid #d21414; /* Outer border */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Styling table headers */
+.prices-table th {
+    background-color: #d21414;
+    color: white;
+    padding: 6px 6px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 1.2rem;
+    border-bottom: 4px solid #b10e0e; /* Add bottom border to header */
+}
+
+/* Styling table rows */
+.prices-table tr {
+    border-bottom: 1px solid #ddd;
+}
+
+.prices-table tr:nth-child(even) {
+    background-color: #f7f7f7; /* Alternate row colors */
+}
+
+.prices-table tr:hover {
+    background-color: #ffe6e6; /* Hover effect on rows */
+}
+
+/* Styling table cells */
+.prices-table td {
+    padding: 3px 5px;
+    text-align: left;
+}
+
+/* Styling the first column */
+.price-type {
+    font-weight: bold;
+    color: #d21414;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 600px) {
+    .prices-table {
+        font-size: 0.9rem;
+    }
+
+    .prices-table th, .prices-table td {
+        padding: 8px;
+    }
+}
+
+
+
+.b-heading {
+     /* Makes it look clickable */
+    padding: 10px;
+    background-color: #f8f9fa;
+    /* border: 2px solid #333; */
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin: 10px;
+}
+
+
+.b-heading h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #d21414;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    line-height: 1.2;
+    position: relative;
+    display: inline-block;
+    padding: 0 0;
+    margin-top: 20px;
+}
+
+.b-c-heading h1 {
+    font-size: 1.5em;
+    margin: 0;
+    color: #d21414;
+    padding: 10px;
+    background-color: #f8f9fa;
+    /* border: 2px solid #333; */
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin: 25px;
+    cursor: pointer;
+  }
+
+.rotate {
+    transform: rotate(180deg);
+}
+
+.arrow {
+    display: inline-block;
+    margin-left: 10px;
+    transition: transform 0.3s ease;
+    font-size: 1.2em;
+    transform-origin: center; /* Ensures the rotation happens around the center of the arrow */
+  }
+
+.blog-section {
+    margin: 20px 0; /* Add space between blog sections */
+    border: 1px solid #ddd; /* Light border around each section */
+    border-radius: 8px; /* Rounded corners */
+    overflow: hidden; /* Prevent overflow issues */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+}
+
+.banner-container {
+    background-color: #f7f7f7; /* Light background for the header */
+    padding: 15px; /* Padding inside the banner */
+    cursor: pointer; /* Change cursor to pointer on hover */
+    transition: background-color 0.3s; /* Smooth background transition */
+}
+
+.banner-container:hover {
+    background-color: #e7e7e7; /* Darker background on hover */
+}
+
+.banner-content h2 {
+    font-size: 1.5rem; /* Font size for the heading */
+    color: #333; /* Dark text color */
+    margin: 0; /* Remove default margin */
+    font-weight: 600; /* Semi-bold font weight */
+}
+
+.arrow-up {
+    display: inline-block; /* Make the arrow visible */
+    width: 10px; /* Width of the arrow */
+    height: 10px; /* Height of the arrow */
+    background-color: transparent; /* Background color */
+    border: solid #333; /* Arrow color */
+    border-width: 0 10px 10px 0; /* Arrow styling */
+    transform: rotate(0deg); /* Rotate to point up */
+    margin-left: 10px; /* Space between title and arrow */
+}
+
+.b-container {
+    padding: 15px; /* Padding for the content container */
+    background-color: #fff; /* White background for the content */
+    border-top: 1px solid #ddd; /* Light border between header and content */
+}
+
+.b-container p {
+    font-size: 1rem; /* Font size for the paragraph */
+    color: #555; /* Lighter text color */
+    line-height: 1.6; /* Increased line height for readability */
+    margin: 0; /* Remove default margin */
+}
+
+.hidden-iframe {
+    display: none;
+    visibility: hidden;
+}
+
+/* Media queries for responsiveness */
+
+/* Small screens (mobile devices - width up to 600px) */
+@media (max-width: 600px) {
+    .banner-content h2 {
+        font-size: 1.2rem; /* Smaller font size for mobile */
+    }
+    
+    .b-container p {
+        font-size: 0.9rem; /* Slightly smaller paragraph text */
+        line-height: 1.4;  /* Tighter line spacing on small screens */
+    }
+
+    .banner-container {
+        padding: 10px; /* Reduce padding for small screens */
+    }
+
+    .blog-section {
+        margin: 10px 0; /* Reduce margin between sections */
+        box-shadow: none; /* Remove shadow to save space */
+    }
+
+    .arrow-up {
+        width: 8px; /* Slightly smaller arrow */
+        height: 8px;
+    }
+}
+
+/* Medium screens (tablets - width between 600px and 992px) */
+@media (min-width: 601px) and (max-width: 992px) {
+    .banner-content h2 {
+        font-size: 1.3rem; /* Slightly smaller than on large screens */
+    }
+
+    .b-container p {
+        font-size: 0.95rem; /* Slightly smaller text */
+    }
+
+    .banner-container {
+        padding: 12px; /* Adjust padding for medium screens */
+    }
+
+    .blog-section {
+        margin: 15px 0; /* Adjust margin between sections */
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08); /* Softer shadow for medium screens */
+    }
+    .blog-button {
+        display: none;
+    }
+
+}
+
+/* Extra small screens (small phones - width below 400px) */
+@media (max-width: 400px) {
+    .banner-content h2 {
+        font-size: 12px; /* Smaller heading for extra small screens */
+    }
+
+    .b-container p {
+        font-size: 0.85rem; /* Smaller paragraph text */
+    }
+
+    .banner-container {
+        padding: 4px; /* Further reduce padding */
+    }
+
+    .blog-section {
+        margin: 4px 0; /* Less margin between blog sections */
+        padding-top: 0px;
+    }
+
+    .arrow-up {
+        width: 2px; /* Smaller arrow for extra small screens */
+        height: 2px;
+    }
+
+    .prices-table th {
+        background-color: #d21414;
+        color: white;
+        padding: 3px 3px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 1rem;
+        border-bottom: 4px solid #d21414; /* Add bottom border to header */
+    }
+
+    .prices-table td {
+        padding: 2px 3px;
+        text-align: left;
+    }
+
+    .n-btn {
+        font-size: 1rem;
+        padding: 6px 8px;
+        border-radius: 8px; /* More rounded corners */
+        text-decoration: none;
+        color: #fff;
+        display: inline-block; /* Better alignment and spacing */
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Deeper shadow for more depth */
+        transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transitions */
+        text-align: center;
+    
+    }
+
+    .history p {
+        font-size: 1rem;
+        margin: auto;
+    }
+
+}
+
+
+
+/* Media queries for responsiveness */
+
+/* Small screens (mobile devices - width up to 600px) */
+@media (max-width: 600px) {
+    .b-heading {
+        padding: 8px; /* Reduce padding for mobile devices */
+    }
+
+    .b-heading h3 {
+        font-size: 1.5rem; /* Smaller heading font size */
+        letter-spacing: 0.5px; /* Reduce letter spacing */
+        margin-top: 15px; /* Slightly smaller margin */
+    }
+    .blog-button {
+        display: none;
+    }
+}
+
+/* Medium screens (tablets - width between 600px and 992px) */
+@media (min-width: 601px) and (max-width: 992px) {
+    .b-heading {
+        padding: 9px; /* Adjust padding for medium screens */
+    }
+
+    .b-heading h3 {
+        font-size: 1.75rem; /* Slightly smaller heading */
+        letter-spacing: 0.8px; /* Adjust letter spacing */
+        margin-top: 18px; /* Adjust top margin */
+    }
+}
+
+/* Extra small screens (small phones - width below 400px) */
+@media (max-width: 400px) {
+    .b-heading {
+        padding: 5px; /* Reduce padding further for small screens */
+    }
+
+    .b-heading h3 {
+        font-size: 1.2rem; /* Further reduce heading size */
+        letter-spacing: 0.4px; /* Reduce letter spacing further */
+        margin-top: 12px; /* Adjust top margin for extra small screens */
+    }
+
+    .b-heading h1 {
+        font-size: 1.3rem; /* Further reduce heading size */
+        letter-spacing: 0.4px; /* Reduce letter spacing further */
+        margin-top: 12px; /* Adjust top margin for extra small screens */
+    }
+
+    .blog-button {
+        display: none;
+    }
+
+    .whychooseus {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #ff6b6b; /* Use the red color */
+        text-align: center; /* Center align the text */
+        margin: 10px; /* Center the element horizontally with auto margins */
+        padding: 15px 20px; /* Add padding for better spacing */
+        letter-spacing: 1px; /* Adjust letter spacing */
+        text-transform: uppercase; /* Capitalize the text for emphasis */
+        position: relative; /* Required for the pseudo-elements */
+        display: block; /* Make it a block-level element to take full width */
+        background: transparent; /* Transparent to see background image */
+        border-radius: 12px; /* Slightly rounded corners */
+        transition: all 0.3s ease; /* Smooth hover effect */
+        width: fit-content; /* Ensure width adjusts based on content */
+        margin-left: auto; /* Center horizontally */
+        margin-right: auto; /* Center horizontally */
+      
+        /* Create a subtle shadow effect */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 4px 20px rgba(0, 0, 0, 0.08);
+        margin-bottom: 30px;
+        /* Add a gradient border */
+        /* background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 107, 107, 0.15) 100%); */
+        /* background-clip: padding-box; */
+    }
+}
+
+/* Blog Button Styling */
+.blog-button {
+    position: fixed; /* Fixes the button in a specific place relative to the viewport */
+    top: 50px; /* Distance from the top of the screen */
+    right: 15px; /* Distance from the right side of the screen */
+    background-color: #d63333;
+    color: white;
+    padding: 15px 25px;
+    font-size: 1.2rem;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    font-weight: 600;
+    z-index: 999; /* Ensures the button stays on top of other content */
+}
+
+.blog-button:hover {
+    background-color: #d63333;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2); 
+}
+
+.translate {
+    position: fixed; /* Fixes the button in a specific place relative to the viewport */
+    top: 10px; /* Distance from the top of the screen */
+    right: 10px; /* Distance from the right side of the screen */
+}
+
+.h-insta h3 {
+    background: linear-gradient(to right, #f52929, #f52929);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+    color: transparent;
+    text-align: center;
+    margin-top: 25px;
+    font-size: 35px;
+}
+
+.h-insta h7 {
+    font-size: 20px;
+}
+
+.h-insta-btn:hover {
+    transform: scale(1.1);
+}
+
+.h-insta-btn {
+    align-items: center;
+    transition: transform 0.3s ease;
+    justify-content: center;
+    display: flex;
+    width: auto;
+    height: 300px;
+    margin-top: 20px;
+}
+
+.h-insta-btn img {
+    width: 240px;
+    height: 240px;
+}
+
+@media (max-width: 400px) {
+    .h-insta-btn {
+        align-items: center;
+        transition: transform 0.3s ease;
+        justify-content: center;
+        display: flex;
+        width: auto;
+        height: 150px;
+        margin-top: 20px;
+    }
+
+    .h-insta-btn img {
+        width: 140px;
+        height: 140px;
+    }
+    
+}
+
+.h-image {
+    width: 100%; /* Adjust the width as per your layout */
+    display: flex;
+    justify-content: center; /* Center the image horizontally */
+    align-items: center; /* Center the image vertically */
+    padding: 10px;
+}
+
+.h-image img {
+    width: 100%; /* Make the image responsive */
+    max-width: 700px; /* Restrict the maximum width */
+    height: auto;
+    border-radius: 10px; /* Give rounded corners to the image */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Add a subtle shadow for a modern look */
+}
+
+  
+/* Table container for centering */
+.table-container {
+max-width: 800px;
+margin: 0 auto;
+padding: 20px;
+background-color: #fff;
+border-radius: 10px;
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Chilli Table Styling */
+.chilli-table {
+width: 100%;
+border-collapse: collapse;
+overflow: hidden;
+}
+
+.table-container p {
+    color: #d21414;
+}
+/* Table Headers Styling */
+.chilli-table thead th {
+background-color: #d21414; /* Red */
+color: #fff;               /* White Text */
+font-size: 1.2em;
+text-align: left;
+padding: 12px;
+}
+
+/* Table Body Rows */
+.chilli-table tbody tr:nth-child(even) {
+background-color: #f8f8f8; /* Light Gray for alternating rows */
+}
+
+.chilli-table tbody tr:nth-child(odd) {
+background-color: #fff; /* White background for odd rows */
+}
+
+.chilli-table tbody td {
+padding: 12px;
+color: #000; /* Black text */
+border-bottom: 1px solid #ccc;
+}
+
+/* Hover Effect on Table Rows */
+.chilli-table tbody tr:hover {
+background-color: #ffcccc; /* Light red when hovering over rows */
+transition: background-color 0.3s;
+}
+
+/* Footer row styling */
+.chilli-table tfoot td {
+background-color: #333; /* Dark background */
+color: #fff;            /* White text */
+padding: 12px;
+}
+
+
+.hero-section {
+    position: relative;
+    width: 100%;
+    height: 75vh; /* Full screen */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.5); /* Fallback background */
+    overflow: hidden;
+}
+
+.hero-media img, .hero-media video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+}
+
+.hero-content {
+    z-index: 1;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.hero-content h1 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    font-weight: bold;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.8);
+}
+
+.hero-content p {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.8);
+}
+
+.hero-btn {
+    padding: 10px 30px;
+    background-color: red;
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.hero-btn:hover {
+    background-color: darkred;
+}
+
+.hero-content h1 {
+    animation: fadeInDown 1s ease-in-out;
+}
+
+@keyframes fadeInDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+@media (max-width: 768px) {
+    .hero-section {
+        height: 60vh;
+    }
+    
+    .hero-content h1 {
+        font-size: 2rem;
+    }
+    
+    .hero-content p {
+        font-size: 1rem;
+    }
+    
+    .hero-btn {
+        padding: 8px 20px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 400px) {
+    .hero-section {
+        height: 60vh;
+    }
+    
+    .hero-content h1 {
+        font-size: 2rem;
+    }
+    
+    .hero-content p {
+        font-size: 1rem;
+    }
+    
+    .hero-btn {
+        padding: 8px 20px;
+        font-size: 0.9rem;
+    }
+}
+
+
+
+.product-slider {
+    position: relative;
+    width: 100%;
+    max-width: 1200px;
+    margin: 5px auto;
+    overflow: hidden;
+}
+
+.slider-container {
+    display: flex;
+    transition: transform 2s ease;
+    max-width: 100%; /* Optional: Reduce width of the container for compactness */
+    height: 400px;  /* Set a fixed height for the slider */
+    margin: 0 auto; /* Center the container */
+    border-radius: 10px; /* Optional: Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Optional: Add a shadow */
+}
+
+.slide {
+    min-width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.slide-content {
+    position: absolute;
+    bottom: 20px;
+    left: 60px;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 20px;
+    color: white;
+    text-align: left;
+    max-width: 400px;
+}
+
+.slide-content h3 {
+    margin-bottom: 10px;
+    font-size: 1.8rem;
+}
+
+.slide-content p {
+    margin-bottom: 15px;
+    font-size: 1rem;
+}
+
+.btn {
+    padding: 10px 20px;
+    background-color: red;
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+    margin-right: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: darkred;
+}
+
+.btn.secondary {
+    background-color: white;
+    color: black;
+}
+
+.btn.secondary:hover {
+    background-color: lightgray;
+}
+
+.slider-nav {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    transform: translateY(-50%);
+}
+
+.slider-nav button {
+    background-color: black;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.slider-nav button:hover {
+    background-color: red;
+}
+
+@media (max-width: 768px) {
+    .slide-content {
+        max-width: 80%;
+        font-size: 0.9rem;
+    }
+    
+    .slide-content h3 {
+        font-size: 1.4rem;
+    }
+    
+    .btn {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 400px) {
+    .slide-content {
+        max-width: 80%;
+        font-size: 0.9rem;
+        bottom: 75px;
+    }
+    
+    .slide-content h3 {
+        font-size: 1.4rem;
+    }
+    
+    .btn {
+        font-size: 0.8rem;
+    }
+}
+
+.export-info {
+    background: linear-gradient(135deg, #e0e0e0, #f5f5f5); /* Gradient background for depth */
+    padding: 30px; /* Increased padding for a more spacious feel */
+    border-radius: 12px; /* Slightly more rounded corners */
+    text-align: center; /* Center the text */
+    margin: 30px 0; /* Increased margin for better spacing */
+    font-size: 1.5rem; /* Larger font size for emphasis */
+    color: #2c3e50; /* Darker text color for better contrast */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Deeper shadow for a more pronounced effect */
+    border: 2px solid #d21818; /* Border to add definition */
+    transition: transform 0.3s ease; /* Smooth transition for hover effect */
+    font-weight: 500;
+}
+
+.export-info:hover {
+    transform: scale(1.02); /* Slightly scale up on hover for interactivity */
+}
