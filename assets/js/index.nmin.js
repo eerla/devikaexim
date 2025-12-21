@@ -87,41 +87,85 @@ function toggleBlogPost(element) {
 
 
 // google sheets - price table
-const API_KEY = 'AIzaSyDTNXpn-TFWhInawEkrm94tp7wSVDIG9T0';
+// const API_KEY = 'AIzaSyALCAlXw5hTzOLbsZDc2i31vJb5hTZ5Pq8';
+const API_KEY = 'AIzaSyALCAlXw5hTzOLbsZDc2i31vJb5hTZ5Pq8'; 
 const SPREADSHEET_ID = '1ntdLZUDLOj8cAfd6vessJ8-ENsbOBu05KuVtiELkq0Y';
 const RANGE = 'chilli_prices!A:C'; // Adjust this range based on your data structure
+
+// async function fetchDailyPrices() {
+//   const cacheKey = 'cachedDailyPrices';
+//   const cacheTimeKey = 'cacheTime';
+//   const cacheDuration = 7500*60*1000; // Cache for 1 week
+
+//   // Check if cached data exists and is still valid
+//   const cachedPrices = localStorage.getItem(cacheKey);
+//   const cachedTime = localStorage.getItem(cacheTimeKey);
+  
+//   if (cachedPrices && cachedTime && (Date.now() - cachedTime < cacheDuration)) {
+//       // If valid cache is available, use it
+//       displayPrices(JSON.parse(cachedPrices));
+//   } else {
+//       // Fetch new prices from Google Sheets API
+//       const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${RANGE}?key=${API_KEY}`;
+      
+//       try {
+//           const response = await fetch(url);
+//           const data = await response.json();
+
+//           // Cache the fetched prices and the current time
+//           localStorage.setItem(cacheKey, JSON.stringify(data.values));
+//           localStorage.setItem(cacheTimeKey, Date.now());
+
+//           displayPrices(data.values);
+//       } catch (error) {
+//           console.error('Error fetching prices:', error);
+//       }
+//   }
+// }
 
 async function fetchDailyPrices() {
   const cacheKey = 'cachedDailyPrices';
   const cacheTimeKey = 'cacheTime';
-  const cacheDuration = 7500*60*1000; // Cache for 1 week
+  const cacheDuration = 7 * 24 * 60 * 60 * 1000; // 1 week
 
-  // Check if cached data exists and is still valid
+  const pricesContainer = document.getElementById('daily-prices');
+  if (!pricesContainer) return;
+
   const cachedPrices = localStorage.getItem(cacheKey);
-  const cachedTime = localStorage.getItem(cacheTimeKey);
-  
-  if (cachedPrices && cachedTime && (Date.now() - cachedTime < cacheDuration)) {
-      // If valid cache is available, use it
-      displayPrices(JSON.parse(cachedPrices));
-  } else {
-      // Fetch new prices from Google Sheets API
-      const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${RANGE}?key=${API_KEY}`;
-      
-      try {
-          const response = await fetch(url);
-          const data = await response.json();
+  const cachedTime = Number(localStorage.getItem(cacheTimeKey));
 
-          // Cache the fetched prices and the current time
-          localStorage.setItem(cacheKey, JSON.stringify(data.values));
-          localStorage.setItem(cacheTimeKey, Date.now());
-
-          displayPrices(data.values);
-      } catch (error) {
-          console.error('Error fetching prices:', error);
+  // Safe-parse cached JSON only when it looks valid
+  if (cachedPrices && cachedPrices !== 'undefined' && cachedTime && (Date.now() - cachedTime < cacheDuration)) {
+    try {
+      const parsed = JSON.parse(cachedPrices);
+      if (Array.isArray(parsed) && parsed.length) {
+        displayPrices(parsed);
+        return;
       }
+    } catch (err) {
+      console.warn('Invalid cachedDailyPrices JSON, refetching:', err);
+      // fall through to fetch
+    }
+  }
+
+  // Fetch fresh data
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${RANGE}?key=${API_KEY}`;
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    const values = Array.isArray(data.values) ? data.values : [];
+
+    localStorage.setItem(cacheKey, JSON.stringify(values));
+    localStorage.setItem(cacheTimeKey, String(Date.now()));
+
+    displayPrices(values);
+  } catch (error) {
+    console.error('Error fetching prices:', error);
+    pricesContainer.textContent = 'Daily prices are currently unavailable.';
   }
 }
 
+//  curl.exe -i "https://sheets.googleapis.com/v4/spreadsheets/<SPREADSHEET_ID>/values/chilli_prices!A:C?key=AIzaSyALCAlXw5hTzOLbsZDc2i31vJb5hTZ5Pq8"
 // Function to display prices on the webpage
 function displayPrices(prices) {
   const pricesContainer = document.getElementById('daily-prices');
