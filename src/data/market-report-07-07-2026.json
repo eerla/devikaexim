@@ -1,0 +1,137 @@
+{
+  "report_date": "07-07-2026",
+  "market": "Guntur",
+  "state": "Andhra Pradesh",
+  "arrivals": {
+    "ac": "40,000 bags approx"
+  },
+  "prices": [
+    {
+      "category": "AC",
+      "variety": "TEJA",
+      "min": 18000,
+      "max": 21500
+    },
+    {
+      "category": "AC",
+      "variety": "2043",
+      "min": 30000,
+      "max": 35000
+    },
+    {
+      "category": "AC",
+      "variety": "355 byadgi",
+      "min": 23000,
+      "max": 25500
+    },
+    {
+      "category": "AC",
+      "variety": "DELUXE",
+      "min": 26000,
+      "max": 26000
+    },
+    {
+      "category": "AC",
+      "variety": "Syngenta ballary",
+      "min": 21000,
+      "max": 24000
+    },
+    {
+      "category": "AC",
+      "variety": "DD",
+      "min": 22000,
+      "max": 25000,
+      "mid": 24500
+    },
+    {
+      "category": "AC",
+      "variety": "341 DESHAWALI",
+      "min": 23000,
+      "max": 25000
+    },
+    {
+      "category": "AC",
+      "variety": "BCM",
+      "min": 22000,
+      "max": 24000
+    },
+    {
+      "category": "AC",
+      "variety": "NO 5",
+      "min": 22000,
+      "max": 25000
+    },
+    {
+      "category": "AC",
+      "variety": "334 S.10",
+      "min": 23000,
+      "max": 26000
+    },
+    {
+      "category": "AC",
+      "variety": "DELUXE",
+      "min": 26500,
+      "max": 27000
+    },
+    {
+      "category": "AC",
+      "variety": "Armour",
+      "min": 19000,
+      "max": 21500
+    },
+    {
+      "category": "AC",
+      "variety": "Armour (Top Gun)",
+      "min": 22000,
+      "max": 23000
+    },
+    {
+      "category": "AC",
+      "variety": "ROMI",
+      "min": 19000,
+      "max": 21000
+    },
+    {
+      "category": "AC",
+      "variety": "Shark & Sharp",
+      "min": 19000,
+      "max": 21000
+    },
+    {
+      "category": "AC",
+      "variety": "Classic",
+      "min": 21000,
+      "max": 23500
+    },
+    {
+      "category": "AC",
+      "variety": "Bangaram",
+      "min": 22000,
+      "max": 25000
+    },
+    {
+      "category": "AC",
+      "variety": "Bullet",
+      "min": 22000,
+      "max": 24000
+    },
+    {
+      "category": "AC",
+      "variety": "TEJA FATKI",
+      "min": 13500,
+      "max": 15000
+    },
+    {
+      "category": "AC",
+      "variety": "FATKI",
+      "min": 13500,
+      "max": 15000
+    }
+  ],
+  "summary": [
+    "DELUXE SOME LOTS 22000",
+    "MOSTLY:19000/21000",
+    "TEJA DELUXE QLTY GOOD SALES VERY LESS DELUXE QUALITIES"
+  ],
+  "market_status": "STEADY"
+}

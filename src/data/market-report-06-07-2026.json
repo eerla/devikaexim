@@ -1,0 +1,125 @@
+{
+  "report_date": "06.07.2026",
+  "market": "Guntur",
+  "state": "Andhra Pradesh",
+  "arrivals": {
+    "ac": "AC ARRIVALS 40,000 BAGS APPROX"
+  },
+  "prices": [
+    {
+      "category": "AC",
+      "variety": "AC TEJA QLTS",
+      "min": 18000,
+      "max": 21500
+    },
+    {
+      "category": "AC",
+      "variety": "AC TEJA QLTS GENERAL MARKET",
+      "min": 19000,
+      "max": 21000,
+      "note": "General market"
+    },
+    {
+      "category": "AC",
+      "variety": "AC",
+      "min": 24500,
+      "max": 34122000
+    },
+    {
+      "category": "AC",
+      "variety": "AC ARMOUR QLTS",
+      "min": 18000,
+      "max": 21500,
+      "mid": 21000
+    },
+    {
+      "category": "AC",
+      "variety": "AC",
+      "min": 334,
+      "max": 1024000,
+      "mid": 27000
+    },
+    {
+      "category": "AC",
+      "variety": "AC SHARK QLTS",
+      "min": 19000,
+      "max": 21000
+    },
+    {
+      "category": "AC",
+      "variety": "AC SYNGENTA BALLARY QLTS",
+      "min": 20000,
+      "max": 22000,
+      "mid": 21500
+    },
+    {
+      "category": "AC",
+      "variety": "AC SYNGENTA DESAVALI QLTS",
+      "min": 22000,
+      "max": 24000,
+      "mid": 23500
+    },
+    {
+      "category": "AC",
+      "variety": "AC ROMI",
+      "min": 21000,
+      "max": 2619000
+    },
+    {
+      "category": "AC",
+      "variety": "AC NO",
+      "min": 25000,
+      "max": 522000
+    },
+    {
+      "category": "AC",
+      "variety": "AC",
+      "min": 35000,
+      "max": 204330000
+    },
+    {
+      "category": "AC",
+      "variety": "AC DD QLTS",
+      "min": 20000,
+      "max": 25000
+    },
+    {
+      "category": "AC",
+      "variety": "AC  BULLET QLTYS",
+      "min": 21500,
+      "max": 24000
+    },
+    {
+      "category": "AC",
+      "variety": "AC  BANGARAM QLTS",
+      "min": 22000,
+      "max": 25000
+    },
+    {
+      "category": "AC",
+      "variety": "AC",
+      "min": 25500,
+      "max": 35522500,
+      "mid": 26000
+    },
+    {
+      "category": "AC",
+      "variety": "AC TEJA TALU",
+      "min": 13500,
+      "max": 15000,
+      "mid": 14500
+    },
+    {
+      "category": "AC",
+      "variety": "AC SEED TALU",
+      "min": 13500,
+      "max": 15000
+    }
+  ],
+  "summary": [
+    "AC Ganesh Armour/🔝 🔫 21000/23000",
+    "Mostly medium/medium best,   Late AC Qlts in market*",
+    "Deluxe Less Qlts in market*"
+  ],
+  "market_status": "steady"
+}

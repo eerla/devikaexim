@@ -1,0 +1,67 @@
+---
+import marketData from '../data/market-report.json';
+const { report_date, market, state, arrivals, prices, summary } = marketData;
+---
+
+<section class="market-section">
+  <div class="market-header">
+    <div>
+      <h2>Guntur Chilli Market Report</h2>
+      <p class="market-location">{market}, {state}</p>
+    </div>
+    <span class="report-date">{report_date}</span>
+  </div>
+
+  <div class="arrivals-card">
+    <h3>Today's Arrivals</h3>
+    <div class="arrivals-grid">
+      <div class="arrival-item">
+        <span class="arrival-label">Non-AC</span>
+        <span class="arrival-value">{arrivals.non_ac}</span>
+      </div>
+      <div class="arrival-item">
+        <span class="arrival-label">AC</span>
+        <span class="arrival-value">{arrivals.ac}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="prices-table-wrapper">
+    <h3>Today's Prices</h3>
+    <div class="table-scroll">
+      <table class="market-prices-table">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Variety</th>
+            <th>Min (₹)</th>
+            <th>Max (₹)</th>
+            <th>Note</th>
+          </tr>
+        </thead>
+        <tbody>
+          {prices.map((price, idx) => (
+            <tr>
+              <td>
+                <span class={`badge ${price.category.toLowerCase().replace(/[^a-z]/g, '-')}`}>
+                  {price.category}
+                </span>
+              </td>
+              <td class="variety-name">{price.variety}</td>
+              <td class="price">₹{price.min.toLocaleString()}</td>
+              <td class="price">₹{price.max.toLocaleString()}</td>
+              <td class="note">{price.note || '—'}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="market-summary">
+    <h3>Market Summary</h3>
+    <ul>
+      {summary.map(item => <li>{item}</li>)}
+    </ul>
+  </div>
+</section>
