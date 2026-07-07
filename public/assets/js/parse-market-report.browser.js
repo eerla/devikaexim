@@ -1,0 +1,168 @@
+const VARIANT_MAP = {
+  'teja': 'TEJA',
+  'teja fatki': 'TEJA FATKI',
+  '341': '341',
+  '341 deshawali': '341 DESHAWALI',
+  'armour': 'Armour',
+  'armoor': 'Armour',
+  'armoor (top gun)': 'Armour (Top Gun)',
+  '334': '334',
+  '334 s.10': '334 S.10',
+  'shark & sharp': 'Shark & Sharp',
+  'shark': 'Shark',
+  'syngenta ballary': 'Syngenta ballary',
+  'syngenta desavali': 'Syngenta desavali',
+  'syzinta byadgi': 'Syngenta ballary',
+  'romi': 'ROMI',
+  'romi 26': 'ROMI 26',
+  'no.5': 'NO 5',
+  'no 5': 'NO 5',
+  '2043': '2043',
+  'dd': 'DD',
+  'bullet': 'Bullet',
+  'bangaram': 'Bangaram',
+  '355 byadgi': '355 byadgi',
+  'classic': 'Classic',
+  'fatki': 'FATKI',
+  'deluxe': 'DELUXE'
+};
+
+function normalizeVariety(raw) {
+  var lower = raw.toLowerCase().trim();
+  return VARIANT_MAP[lower] || raw.trim().toUpperCase();
+}
+
+function parsePriceRange(text) {
+  var cleaned = text.replace(/[^\d/]/g, '').trim();
+  var parts = cleaned.split('/').map(function(p) { return parseInt(p.trim(), 10); }).filter(function(n) { return !isNaN(n); });
+  if (parts.length === 0) return null;
+  if (parts.length === 1) return { min: parts[0], max: parts[0] };
+  if (parts.length === 2) return { min: Math.min(parts[0], parts[1]), max: Math.max(parts[0], parts[1]) };
+  var sorted = parts.slice().sort(function(a, b) { return a - b; });
+  return { min: sorted[0], max: sorted[sorted.length - 1], mid: sorted[1] };
+}
+
+function detectCategory(line) {
+  var upper = line.toUpperCase();
+  if (upper.indexOf('NON AC') !== -1 || upper.indexOf('NONAC') !== -1) return 'NON AC';
+  if (upper.indexOf('AC ') !== -1 || upper.indexOf('A/C') !== -1) return 'AC';
+  return 'AC';
+}
+
+function extractNote(line) {
+  var notes = ['Deluxe Qlts not available', 'No Deluxe', 'Deluxe Less Qlts in market', 'General market', 'GOOD SALES VERY LESS DELUXE QUALITIES'];
+  for (var i = 0; i < notes.length; i++) {
+    if (line.toLowerCase().indexOf(notes[i].toLowerCase()) !== -1) return notes[i];
+  }
+  return undefined;
+}
+
+function parseMarketReport(raw) {
+  var lines = raw.split('\n').map(function(l) { return l.trim(); }).filter(function(l) { return !!l; });
+  var result = {
+    report_date: '',
+    market: 'Guntur',
+    state: 'Andhra Pradesh',
+    arrivals: {},
+    prices: [],
+    summary: []
+  };
+  var currentCategory = 'AC';
+
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i];
+    var clean = line.replace(/^[*•💥🪷🌶️🗒️()]+/, '').replace(/[*]+$/g, '').trim();
+    if (!clean || clean === 'TMPMIRCHI MARKET REPORTS' || clean === 'BHARAT') continue;
+
+    if (clean.match(/\d{2}[.\-]\d{2}[.\-]\d{4}/)) {
+      var dm = clean.match(/\d{2}[.\-]\d{2}[.\-]\d{4}/);
+      if (dm) result.report_date = dm[0];
+      continue;
+    }
+    if (clean.match(/^(ANDHRA|ANDHRA PRADESH|GUNTUR)$/i)) {
+      if (/ANDHRA/i.test(clean)) result.state = 'Andhra Pradesh';
+      if (/GUNTUR/i.test(clean)) result.market = 'Guntur';
+      continue;
+    }
+    if (clean.match(/ARRIVALS/i)) {
+      var numMatch = clean.match(/([\d,]+)\/[\d,]*\s*bags/i);
+      var num = numMatch ? numMatch[1] : '';
+      if (/NON.?AC/i.test(clean)) {
+        result.arrivals.non_ac = num ? num + ' bags approx' : clean;
+      } else if (/^A?\/?\s*C\s/i.test(clean) || /^AC/i.test(clean)) {
+        result.arrivals.ac = num ? num + ' bags approx' : clean;
+      } else if (!result.arrivals.ac && /AC/i.test(clean)) {
+        result.arrivals.ac = num ? num + ' bags approx' : clean;
+      }
+      continue;
+    }
+    if (clean.match(/MARKET\s+(STEADY|WEAK|UP|DOWN)/i)) {
+      var sm = clean.match(/STEADY|WEAK|UP|DOWN/i);
+      if (sm) result.market_status = sm[0];
+      continue;
+    }
+    if (clean.indexOf('👈') !== -1) {
+      var text = clean.replace('👈', '').trim();
+      if (text) result.summary.push(text);
+      continue;
+    }
+    var hasPriceRange = /[\d,]+\/[\d,]+/.test(clean) || /^\d+$/.test(clean.replace(/[^\d]/g, ''));
+    if (hasPriceRange) {
+      currentCategory = detectCategory(clean);
+      var varietyRaw = '';
+      var pricePart = '';
+      if (clean.indexOf(':') !== -1) {
+        var parts = clean.split(':');
+        varietyRaw = parts[0].trim();
+        pricePart = parts.slice(1).join(':').trim();
+      } else if (clean.match(/^[A-Za-z0-9 &().\-]+[\s]+\d/)) {
+        var m = clean.match(/^(.+?)(\s+\d.*)$/);
+        if (m) {
+          varietyRaw = m[1].trim();
+          pricePart = m[2].trim();
+        } else {
+          varietyRaw = clean;
+          pricePart = '';
+        }
+      } else {
+        varietyRaw = clean;
+        pricePart = '';
+      }
+      var variety = normalizeVariety(varietyRaw);
+      var prices = parsePriceRange(pricePart || clean);
+      var note = extractNote(clean);
+      var isKnownVariety = VARIANT_MAP[varietyRaw.toLowerCase()] !== undefined;
+      var looksLikeVariety = varietyRaw.length > 1 && varietyRaw.length < 30 && !/^(DELUXE SOME|MOSTLY|MARKET|GOOD SALES|LESS DELUXE|TEJA DELUXE)/i.test(varietyRaw);
+      if (prices && variety && (isKnownVariety || looksLikeVariety)) {
+        result.prices.push({ category: currentCategory, variety: variety, min: prices.min, max: prices.max, mid: prices.mid, note: note });
+      } else if (prices && variety) {
+        result.summary.push(clean.replace(/^\*+|\*+$/g, '').trim());
+      }
+      continue;
+    }
+    if (clean.match(/^(DELUXE|MOSTLY|MARKET|TEJA DELUXE)\s/i)) {
+      result.summary.push(clean.replace(/^\*+|\*+$/g, '').trim());
+      continue;
+    }
+  }
+  if (!result.report_date) {
+    var dateMatch = raw.match(/(\d{2})[.\-](\d{2})[.\-](\d{4})/);
+    if (dateMatch) result.report_date = dateMatch[0];
+  }
+  return result;
+}
+
+function downloadJson(filename, content) {
+  var blob = new Blob([content], { type: 'application/json' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+window.parseMarketReport = parseMarketReport;
+window.downloadJson = downloadJson;

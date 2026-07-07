@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import MarketReport from '../components/MarketReport.astro';
 ---
 
 <BaseLayout
@@ -36,11 +37,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </div>
 
     <div class='tagline'>
-      <h4>Best Dry Red Chillies & Chilli Powder <br /> Retail and Wholesale Exporter</h4>
+      <h4>Best Guntur Dry Red Chillies & Chilli Powder <br /> Retail and Wholesale Exporter</h4>
     </div>
 
     <!-- top buttons -->
     <div class="n-mbr-section-btn">
+
+      <button type="button" class="n-btn n-live-prices-btn" onclick="document.getElementById('market-section').scrollIntoView({behavior: 'smooth'})">
+        Live Market Prices
+      </button>
 
       <button type="button" class="n-btn n-place-order-btn"
         onclick="zforms_open_window('https://forms.zohopublic.com/gunturredchillies1/form/Contactus/formperma/dRNXAbE0AMFcrUjQhR4AfgxQx3IIyKT0sUfu1ZbNWzY', 648, 700); return false;">
@@ -48,7 +53,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       </button>
 
       <a class="n-btn n-check-prices-btn" href="/blog.html">
-        Check Today's Prices
+        Check Our Retail Prices
       </a>
     </div>
 
@@ -92,6 +97,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         </video> -->
       </div>
     </section>
+
+    <MarketReport />
 
     <h4 class="custom-order-info">
       <br />

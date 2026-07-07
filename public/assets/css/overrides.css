@@ -334,6 +334,14 @@ section,
   background: #1f2937;
 }
 
+.n-live-prices-btn {
+  background: #b10e0e;
+}
+
+.n-live-prices-btn:hover {
+  background: #8a0b0b;
+}
+
 .order-btn {
   background: #D21818;
   border: none;
@@ -1137,8 +1145,428 @@ section,
 }
 
 /* ========================================
+   Market Report Section
+   ======================================== */
+
+.market-section {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px 48px;
+}
+
+.market-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.market-header h2 {
+  margin: 0;
+  font-size: 1.75rem;
+}
+
+.market-location {
+  margin: 4px 0 0;
+  color: #6b7280;
+  font-size: 1rem;
+}
+
+.report-date {
+  display: inline-block;
+  background: #D21818;
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.arrivals-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  margin-bottom: 24px;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.arrivals-card h3 {
+  margin: 0 0 16px;
+  font-size: 1.1rem;
+  color: #374151;
+}
+
+.arrivals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.arrival-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px;
+  background: #f9fafb;
+  border-radius: 8px;
+  border-left: 4px solid #D21818;
+}
+
+.arrival-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.arrival-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.prices-table-wrapper {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  margin-bottom: 24px;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.prices-table-wrapper h3 {
+  margin: 0 0 16px;
+  font-size: 1.1rem;
+  color: #374151;
+}
+
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.market-prices-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  min-width: 600px;
+}
+
+.market-prices-table th {
+  text-align: left;
+  padding: 12px;
+  background: #f9fafb;
+  color: #6b7280;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid #e5e7eb;
+  white-space: nowrap;
+}
+
+.market-prices-table td {
+  padding: 12px;
+  border-bottom: 1px solid #f3f4f6;
+  vertical-align: middle;
+}
+
+.market-prices-table tbody tr:hover {
+  background: #fef2f2;
+}
+
+.market-prices-table .badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.market-prices-table .badge.ac {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.market-prices-table .badge.non-ac {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.market-prices-table .variety-name {
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.market-prices-table .price {
+  font-weight: 600;
+  color: #1a1a1a;
+  white-space: nowrap;
+}
+
+.market-prices-table .note {
+  color: #D21818;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.market-summary {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.market-summary h3 {
+  margin: 0 0 12px;
+  font-size: 1.1rem;
+  color: #374151;
+}
+
+.market-summary ul {
+  margin: 0;
+  padding-left: 20px;
+  color: #4b5563;
+  line-height: 1.7;
+}
+
+.market-summary li {
+  margin-bottom: 6px;
+}
+
+@media (max-width: 768px) {
+  .market-header {
+    flex-direction: column;
+  }
+  .arrivals-grid {
+    grid-template-columns: 1fr;
+  }
+  .market-prices-table {
+    font-size: 0.9rem;
+  }
+}
+
+/* ========================================
    Reduced motion preference
    ======================================== */
+
+/* ========================================
+   Admin Parser Page
+   ======================================== */
+
+.admin-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px 48px;
+}
+
+.admin-container h1 {
+  font-size: 1.75rem;
+  margin-bottom: 8px;
+}
+
+.admin-subtitle {
+  color: #6b7280;
+  margin-bottom: 24px;
+}
+
+.admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.admin-form label {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #374151;
+}
+
+.admin-form textarea {
+  width: 100%;
+  min-height: 320px;
+  padding: 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  resize: vertical;
+  background: #fafafa;
+}
+
+.admin-form textarea:focus {
+  outline: none;
+  border-color: #D21818;
+  box-shadow: 0 0 0 3px rgba(209, 24, 24, 0.08);
+}
+
+.admin-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.parse-btn {
+  padding: 10px 22px;
+  background: #D21818;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: background 0.2s, transform 0.15s;
+}
+
+.parse-btn:hover {
+  background: #b10e0e;
+  transform: translateY(-1px);
+}
+
+.clear-btn {
+  padding: 10px 22px;
+  background: #fff;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.clear-btn:hover {
+  background: #f3f4f6;
+}
+
+.error-box {
+  padding: 14px 16px;
+  background: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+.preview-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.preview-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.preview-card.full-width {
+  grid-column: 1 / -1;
+}
+
+.preview-card h3 {
+  margin: 0 0 14px;
+  font-size: 1.1rem;
+  color: #1a1a1a;
+}
+
+.preview-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.preview-row span {
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+.preview-row strong {
+  color: #1a1a1a;
+  text-align: right;
+}
+
+.mini-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.mini-table th {
+  text-align: left;
+  padding: 8px;
+  background: #f9fafb;
+  color: #6b7280;
+  font-weight: 600;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.mini-table td {
+  padding: 8px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.hint {
+  margin: 0 0 10px;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.hint code {
+  background: #f3f4f6;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+.json-output {
+  background: #111827;
+  color: #e5e7eb;
+  padding: 16px;
+  border-radius: 8px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  overflow-x: auto;
+  max-height: 420px;
+  overflow-y: auto;
+  margin: 0;
+}
+
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 768px) {
+  .preview-grid {
+    grid-template-columns: 1fr;
+  }
+  .preview-card.full-width {
+    grid-column: 1;
+  }
+}
 
 @media (prefers-reduced-motion: reduce) {
   * {
