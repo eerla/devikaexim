@@ -334,6 +334,14 @@ section,
   background: #1f2937;
 }
 
+.n-live-prices-btn {
+  background: #b10e0e;
+}
+
+.n-live-prices-btn:hover {
+  background: #8a0b0b;
+}
+
 .order-btn {
   background: #D21818;
   border: none;

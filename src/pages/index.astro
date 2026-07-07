@@ -43,13 +43,17 @@ import MarketReport from '../components/MarketReport.astro';
     <!-- top buttons -->
     <div class="n-mbr-section-btn">
 
+      <button type="button" class="n-btn n-live-prices-btn" onclick="document.getElementById('market-section').scrollIntoView({behavior: 'smooth'})">
+        Live Market Prices
+      </button>
+
       <button type="button" class="n-btn n-place-order-btn"
         onclick="zforms_open_window('https://forms.zohopublic.com/gunturredchillies1/form/Contactus/formperma/dRNXAbE0AMFcrUjQhR4AfgxQx3IIyKT0sUfu1ZbNWzY', 648, 700); return false;">
         Place Order Now
       </button>
 
       <a class="n-btn n-check-prices-btn" href="/blog.html">
-        Check Today's Prices
+        Check Our Retail Prices
       </a>
     </div>
 
