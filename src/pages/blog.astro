@@ -1,0 +1,101 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Blog - Devika Exim - Guntur Red Chillies - Daily Prices, Market Insights, and Expert Chilli Information"
+  description="Stay updated with Guntur Red Chillies' daily prices, latest information about dried red chillies, insights on Guntur Mirchi Market Yard, FAQs, and expert tips on buying and exporting premium red chillies."
+  canonical="https://devikaexim.in/blog.html"
+>
+  <div class="b-c-heading" id="toggleHeading">
+    <h1>Today's Market Prices <span class="arrow">&#9650;</span></h1> <!-- &#9650; is the up arrow -->
+  </div>
+
+  <!-- table -->
+  <div id="daily-prices" class="market-prices"></div>
+  <h3 class="b-heading">Our Retail Prices</h3>
+  <!-- our retail prices -->
+  <div class="table-container">
+    <table class="chilli-table">
+      <thead>
+        <tr>
+          <th>Chilli Type</th>
+          <th>Variety</th>
+          <th>Price per kg</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Teja S17 Dried Red Chilli</td>
+          <td>Best Quality</td>
+          <td>&#8377;300</td>
+        </tr>
+        <tr>
+          <td>334 S4/Sannam Dried Red Chilli</td>
+          <td>Best Quality</td>
+          <td>&#8377;300</td>
+        </tr>
+        <tr>
+          <td>Bydgi Dried Red Chilli</td>
+          <td>Best Quality</td>
+          <td>&#8377;300</td>
+        </tr>
+        <tr>
+          <td>341 Dried Red Chilli</td>
+          <td>Best Quality</td>
+          <td>&#8377;300</td>
+        </tr>
+        <tr>
+          <td>No 5 Dried Red Chilli</td>
+          <td>Best Quality</td>
+          <td>&#8377;300</td>
+        </tr>
+        <tr>
+          <td>Armoor Dried Red Chilli</td>
+          <td>Best Quality</td>
+          <td>&#8377;300</td>
+        </tr>
+        <tr>
+          <td>DD Dried Red Chilli</td>
+          <td>Best Quality</td>
+          <td>&#8377;300</td>
+        </tr>
+        <tr>
+          <td>Dried Red Chilli</td>
+          <td>Best Quality</td>
+          <td>&#8377;450</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>*Above listed prices are with stem, add &#8377;35 per kg for without stem. </p>
+    <p>**Shipping is charged additionally and calculated based on the quantity and location.</p>
+  </div>
+  <!-- blogs -->
+  <div class="b-heading">
+    <h3>Visit our blog posts</h3>
+  </div>
+
+  <div id="blog-sections"></div>
+
+  <script type="application/ld+json" is:inline>
+    {
+      "@context": "https://schema.org",
+      "@type": "Blog",
+      "name": "Devika Exim Guntur Red Chillies Blog",
+      "url": "https://devikaexim.in/blog.html",
+      "description": "Insights and updates on red chillies, their varieties, and market trends.",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Devika Exim",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://devikaexim.in/assets/images/logo-no-bg.png"
+        }
+      },
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://devikaexim.in/blog.html"
+      }
+    }
+  </script>
+</BaseLayout>

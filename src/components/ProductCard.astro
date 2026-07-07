@@ -1,0 +1,55 @@
+---
+const { product } = Astro.props;
+const features = product.features || [];
+const highlights = features.slice(0, 4);
+const specs = features.slice(4);
+---
+
+<article class="product-card">
+  <div class="product-card-header">
+    <h2 class="product-title">{product.title}</h2>
+    <p class="product-description">{product.description}</p>
+  </div>
+
+  <div class="product-card-body">
+    <div class="product-images">
+      <div class="product-img">
+        <img src={product.images[0]} alt={product.title} width="400" height="500" loading="lazy" />
+      </div>
+      <div class="product-img">
+        <img src={product.images[1]} alt={product.title} width="400" height="500" loading="lazy" />
+      </div>
+    </div>
+
+    <div class="product-details">
+      <h3 class="details-heading">Key Highlights</h3>
+      <ul class="product-features">
+        {highlights.map((feature: any) => (
+          <li>
+            <span class="feature-icon material-symbols-outlined">check_circle</span>
+            <span class="feature-text"><strong>{feature.feature}:</strong> {feature.value}</span>
+          </li>
+        ))}
+      </ul>
+
+      {specs.length > 0 && (
+        <>
+          <h3 class="details-heading">Specifications</h3>
+          <ul class="product-features specs">
+            {specs.map((feature: any) => (
+              <li>
+                <span class="feature-icon material-symbols-outlined">data_table</span>
+                <span class="feature-text"><strong>{feature.feature}:</strong> {feature.value}</span>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+
+      <button type="button" class="enquire-btn"
+        onclick="zforms_open_window('https://forms.zohopublic.com/gunturredchillies1/form/Contactus/formperma/dRNXAbE0AMFcrUjQhR4AfgxQx3IIyKT0sUfu1ZbNWzY', 648, 700); return false;">
+        Enquire Now
+      </button>
+    </div>
+  </div>
+</article>

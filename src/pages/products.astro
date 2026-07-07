@@ -1,0 +1,45 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProductCard from '../components/ProductCard.astro';
+import products from '../data/products.json';
+---
+
+<BaseLayout
+  title="Devika Exim Guntur dry red chillies and chilli powder descriptions."
+  description="Explore our best quality of Guntur dried red chillies, including 334 Sannam, Byadgi, Teja, 341, No 5, Armoor and DD along with chilli powder. Discover the unique flavors, characteristics, and uses of each variety. Quality sourced directly from Guntur for your culinary needs."
+  canonical="https://devikaexim.in/products.html"
+>
+  <!-- Product Description Section -->
+    <div class="product-section">
+      <div class="centered-heading">
+        <h1>Product <span>Details</span><span class="underline"></span></h1>
+      </div>
+    </div>
+
+    <!-- Product Cards Container -->
+    <div class="product-container">
+      {products.map(product => <ProductCard product={product} />)}
+    </div>
+
+  <script type="application/ld+json" is:inline>
+    {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      "name": "Guntur Dry Red Chillies",
+      "image": "https://devikaexim.in/assets/images/logo-no-bg.png",
+      "description": "High-quality red chillies sourced from Guntur.",
+      "brand": {
+        "@type": "Brand",
+        "name": "Devika Exim"
+      },
+      "offers": {
+        "@type": "Offer",
+        "url": "https://devikaexim.in/products.html",
+        "priceCurrency": "INR",
+        "price": "16000",
+        "itemCondition": "https://schema.org/NewCondition",
+        "availability": "https://schema.org/InStock"
+      }
+    }
+  </script>
+</BaseLayout>

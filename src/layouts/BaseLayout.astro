@@ -1,0 +1,104 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  canonical?: string;
+}
+
+const { title, description, canonical = 'https://devikaexim.in' } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="/assets/images/logo-no-bg.png" type="image/png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/logo-no-bg.png" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonical} />
+  <meta property="og:url" content={canonical} />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Devika Exim" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" />
+  <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+  <link rel="stylesheet" href="/assets/css/styles.css" />
+  <link rel="stylesheet" href="/assets/css/overrides.css" />
+</head>
+<body>
+  <!-- Google Tag Manager -->
+  <script is:inline>
+    (function (w, d, s, l, i) {
+      w[l] = w[l] || []; w[l].push({
+        'gtm.start': new Date().getTime(), event: 'gtm.js'
+      }); var f = d.getElementsByTagName(s)[0],
+        j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+        'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+    })(window, document, 'script', 'dataLayer', 'GTM-WTMHNDJH');
+  </script>
+  <!-- End Google Tag Manager -->
+
+  <!-- Google Tag Manager (noscript) -->
+  <noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WTMHNDJH" class="hidden-iframe"></iframe>
+  </noscript>
+  <!-- End Google Tag Manager (noscript) -->
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/" class="logo-link">
+        <img src="/assets/images/logo-no-bg.png" alt="Devika Exim Logo" class="logo-img" width="120" height="120" />
+      </a>
+      <nav class="main-nav" id="mainNav">
+        <ul>
+          <li><a href="/index.html" class={"nav-link" + (Astro.url.pathname === '/' || Astro.url.pathname === '/index.html' ? ' active' : '')}>Home</a></li>
+          <li><a href="/products.html" class={"nav-link" + (Astro.url.pathname === '/products.html' ? ' active' : '')}>Product Description</a></li>
+          <li><a href="/about.html" class={"nav-link" + (Astro.url.pathname === '/about.html' ? ' active' : '')}>About Us</a></li>
+          <li><a href="/contact.html" class={"nav-link" + (Astro.url.pathname === '/contact.html' ? ' active' : '')}>Contact Us</a></li>
+          <li><a href="/blog.html" class={"nav-link" + (Astro.url.pathname === '/blog.html' ? ' active' : '')}>Our Blog</a></li>
+        </ul>
+      </nav>
+      <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation">
+        <span class="toggle-bar"></span>
+        <span class="toggle-bar"></span>
+        <span class="toggle-bar"></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- WhatsApp Button -->
+  <a href="https://wa.me/918341339975" target="_blank" rel="noreferrer" title="Text us" aria-label="Chat on WhatsApp" class="whatsapp-button">
+    <img src="https://img.icons8.com/color/96/whatsapp--v1.png" alt="WhatsApp" width="40" height="40" />
+  </a>
+
+  <!-- Order Now Button -->
+  <a onclick="zforms_open_window('https://forms.zohopublic.com/gunturredchillies1/form/Contactus/formperma/dRNXAbE0AMFcrUjQhR4AfgxQx3IIyKT0sUfu1ZbNWzY', 648, 700); return false;"
+    target="_blank" rel="noreferrer" title="Order now" aria-label="Order now" class="ordernow-button">
+    <img src="https://img.icons8.com/external-bearicons-detailed-outline-bearicons/100/external-Order-Now-miscellany-texts-and-badges-bearicons-detailed-outline-bearicons.png"
+      alt="OrderNow" width="40" height="40" />
+  </a>
+
+  <!-- Blog Button -->
+  <a href="/blog.html#blog-sections" class="blog-button">Need a tip?</a>
+
+  <!-- Google Translate -->
+  <div id="google_translate_element" class="translate"></div>
+
+  <!-- Main Content -->
+  <main id="main-content" class="main-content">
+    <slot />
+  </main>
+
+  <script src="/assets/js/index.js" is:inline></script>
+  <script is:inline>
+    document.getElementById('mobileToggle').addEventListener('click', function () {
+      document.getElementById('mainNav').classList.toggle('nav-open');
+    });
+  </script>
+  <slot name="scripts" />
+</body>
+</html>
