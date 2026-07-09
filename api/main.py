@@ -270,7 +270,7 @@ def write_report(client: bigquery.Client, report: Dict[str, Any]) -> int:
     return len(rows_to_insert)
 
 
-def fetch_latest_prices(client: bigquery.Client) -> List[Dict[str, Any]]:
+def fetch_latest_prices(client: bigquery.Client) -> dict:
     query = f"""
         SELECT
           report_date,
@@ -284,8 +284,7 @@ def fetch_latest_prices(client: bigquery.Client) -> List[Dict[str, Any]]:
           mid_price,
           note,
           market_status,
-          summary_text,
-          ingested_at
+          summary_text
         FROM `{PROJECT_ID}.{DATASET_ID}.{TABLE_ID}`
         WHERE report_date = (
           SELECT MAX(report_date) FROM `{PROJECT_ID}.{DATASET_ID}.{TABLE_ID}`
@@ -293,10 +292,50 @@ def fetch_latest_prices(client: bigquery.Client) -> List[Dict[str, Any]]:
         ORDER BY category, variety
     """
     results = client.query(query).result()
-    rows = []
-    for row in results:
-        rows.append(dict(row.items()))
-    return rows
+    rows = [dict(row.items()) for row in results]
+
+    if not rows:
+      return {
+        'report_date': '', 'market': 'Guntur', 'state': 'Andhra Pradesh',
+        'arrivals': {}, 'prices': [], 'summary': [], 'market_status': ''
+      }
+
+    first = rows[0]
+    report = {
+      'report_date': first.get('report_date', ''),
+      'market': first.get('market', 'Guntur'),
+      'state': first.get('state', 'Andhra Pradesh'),
+      'arrivals': {},
+      'prices': [],
+      'summary': [],
+      'market_status': first.get('market_status', ''),
+    }
+
+    for row in rows:
+      if row.get('category') == 'SUMMARY':
+        text = row.get('summary_text', '')
+        if text:
+          report['summary'].append(text)
+        continue
+
+      arrivals_raw = row.get('arrivals') or '{}'
+      if isinstance(arrivals_raw, str):
+        try:
+          report['arrivals'] = eval(arrivals_raw)
+        except Exception:
+          report['arrivals'] = {}
+
+      if row.get('category') in ('AC', 'NON AC') and row.get('variety'):
+        report['prices'].append({
+          'category': row.get('category', ''),
+          'variety': row.get('variety', ''),
+          'min': row.get('min_price') or 0,
+          'max': row.get('max_price') or 0,
+          'mid': row.get('mid_price'),
+          'note': row.get('note'),
+        })
+
+    return report
 
 # ─── FastAPI app ──────────────────────────────────────────────────────────────
 
@@ -348,15 +387,7 @@ def ingest_report(request: ReportRequest):
 def get_latest_prices():
     try:
         client = get_bq_client()
-        rows = fetch_latest_prices(client)
-        return {
-            "report_date": rows[0]['report_date'] if rows else '',
-            "market": rows[0]['market'] if rows else 'Guntur',
-            "state": rows[0]['state'] if rows else 'Andhra Pradesh',
-            "arrivals": {},
-            "prices": [],
-            "summary": [],
-            "market_status": rows[0]['market_status'] if rows else '',
-        }
+        report = fetch_latest_prices(client)
+        return report
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
