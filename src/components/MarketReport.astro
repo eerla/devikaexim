@@ -59,7 +59,7 @@ const API_URL = import.meta.env.PUBLIC_API_URL || '';
 
 <script is:inline>
   (function() {
-    var API_URL = window.API_URL || '';
+    var API_URL = '{API_URL}';
     if (!API_URL) {
       document.getElementById('pricesTableBody').innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 24px; color: #6b7280;">API not configured</td></tr>';
       return;
