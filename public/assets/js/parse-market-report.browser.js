@@ -106,7 +106,8 @@ function parseMarketReport(raw) {
       if (text) result.summary.push(text);
       continue;
     }
-    var hasPriceRange = /[\d,]+\/[\d,]+/.test(clean) || /^\d+$/.test(clean.replace(/[^\d]/g, ''));
+    var compactClean = clean.replace(/[\s,]/g, '');
+    var hasPriceRange = /[\d]+\/[\d]+/.test(compactClean) || /^\d+$/.test(compactClean);
     if (hasPriceRange) {
       currentCategory = detectCategory(clean);
       var varietyRaw = '';
@@ -115,19 +116,17 @@ function parseMarketReport(raw) {
         var parts = clean.split(':');
         varietyRaw = parts[0].trim();
         pricePart = parts.slice(1).join(':').trim();
-      } else if (clean.match(/^[A-Za-z0-9 &().\-]+[\s]+\d/)) {
-        var m = clean.match(/^(.+?)(\s+\d.*)$/);
-        if (m) {
-          varietyRaw = m[1].trim();
-          pricePart = m[2].trim();
+      } else {
+        var priceMatch = clean.match(/([\d,]+\/[\d,]+(?:\/[\d,]+)*)\s*$/);
+        if (priceMatch) {
+          pricePart = priceMatch[1].trim();
+          varietyRaw = clean.slice(0, clean.length - priceMatch[0].length).trim();
         } else {
           varietyRaw = clean;
           pricePart = '';
         }
-      } else {
-        varietyRaw = clean;
-        pricePart = '';
       }
+      varietyRaw = varietyRaw.replace(/[^\w\s&().\-/]/g, '').trim();
       var variety = normalizeVariety(varietyRaw);
       var prices = parsePriceRange(pricePart || clean);
       var note = extractNote(clean);

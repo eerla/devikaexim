@@ -127,13 +127,18 @@ export function parseMarketReport(raw: string): MarketReport {
       continue;
     }
 
+    const compactClean = clean.replace(/[\s,]/g, '');
+    const hasPriceRange = /[\d]+\/[\d]+/.test(compactClean) || /^\d+$/.test(compactClean);
     const isPriceLine = clean.includes('QLTS') || clean.includes('QLTY') || clean.includes('TALU');
 
     if (hasPriceRange && isPriceLine) {
       currentCategory = detectCategory(clean);
-      const varietyRaw = clean.replace(/^.*?(?=QLTS|QLTY|TALU)/i, '').replace(/\s*QLTS?\s*$/i, '').replace(/\s*QLTY\s*$/i, '').replace(/\s*TALU\s*$/i, '');
+      const priceMatch = clean.match(/([\d,]+\/[\d,]+(?:\/[\d,]+)*)\s*$/);
+      const varietyRaw = priceMatch
+        ? clean.slice(0, clean.length - priceMatch[0].length).trim().replace(/[^\w\s&().\-/]/g, '').trim()
+        : clean.replace(/\s*(QLTS?|QLTY|TALU)\s*$/i, '').trim();
       const variety = normalizeVariety(varietyRaw);
-      const prices = parsePriceRange(clean);
+      const prices = parsePriceRange(priceMatch ? priceMatch[1] : clean);
       const note = extractNote(clean);
 
       if (prices && variety) {
