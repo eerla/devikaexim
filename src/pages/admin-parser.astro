@@ -82,8 +82,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       }
 
       try {
+        var raw = document.getElementById('raw').value;
         var parsed = window.parseMarketReport(raw);
         currentJson = JSON.stringify(parsed, null, 2);
+        window.currentRawText = raw;
 
         errorBox.style.display = 'none';
         previewArea.style.display = 'block';
@@ -130,7 +132,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       fetch(API_URL + '/api/reports', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: currentJson,
+        body: JSON.stringify({ raw_text: window.currentRawText || '' }),
       })
       .then(function(r) { return r.json(); })
       .then(function(data) {
