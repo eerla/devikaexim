@@ -5,7 +5,8 @@ from typing import Optional, List, Dict, Any
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from typing import Optional, List, Dict, Any
 
 from google.cloud import bigquery
 
@@ -350,6 +351,25 @@ app.add_middleware(
 )
 
 
+class PriceItem(BaseModel):
+    category: str
+    variety: str
+    min: Optional[int] = None
+    max: Optional[int] = None
+    mid: Optional[int] = None
+    note: Optional[str] = None
+
+
+class ParsedReport(BaseModel):
+    report_date: str
+    market: str = 'Guntur'
+    state: str = 'Andhra Pradesh'
+    arrivals: Dict[str, Any] = Field(default_factory=dict)
+    prices: List[PriceItem] = Field(default_factory=list)
+    summary: List[str] = Field(default_factory=list)
+    market_status: str = ''
+
+
 class ReportRequest(BaseModel):
     raw_text: str
 
@@ -375,6 +395,28 @@ def ingest_report(request: ReportRequest):
             "report_date": report['report_date'],
             "prices_count": len(report['prices']),
             "summary_count": len(report['summary']),
+            "rows_written": rows_written,
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/reports/json")
+def ingest_parsed_report(report: ParsedReport):
+    if not report.report_date.strip():
+        raise HTTPException(status_code=400, detail="report_date is required")
+
+    try:
+        client = get_bq_client()
+        report_dict = report.dict()
+        rows_written = write_report(client, report_dict)
+        return {
+            "status": "ok",
+            "report_date": report.report_date,
+            "prices_count": len(report.prices),
+            "summary_count": len(report.summary),
             "rows_written": rows_written,
         }
     except HTTPException:

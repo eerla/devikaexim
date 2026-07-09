@@ -129,10 +129,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       publishBtn.disabled = true;
       publishBtn.textContent = 'Publishing...';
 
-      fetch(API_URL + '/api/reports', {
+      fetch(API_URL + '/api/reports/json', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ raw_text: window.currentRawText || '' }),
+        body: currentJson,
       })
       .then(function(r) { return r.json(); })
       .then(function(data) {
