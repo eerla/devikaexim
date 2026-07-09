@@ -8,3 +8,5 @@ dist
 .env
 .env.*
 !.env.example
+api/key.json
+Devika_Exim_Guntur_Chilli_Intelligence_Platform_Implementation_Plan.md

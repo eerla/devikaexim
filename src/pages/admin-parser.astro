@@ -4,12 +4,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <BaseLayout
   title="Admin - Market Report Parser"
-  description="Paste raw Telegram market reports to generate structured JSON for the website."
-  canonical="https://devikaexim.in/admin.html"
+  description="Paste raw Telegram market reports to publish prices to the website."
+  canonical="https://devikaexim.in/admin-parser.html"
 >
   <div class="admin-container">
     <h1>Market Report Parser</h1>
-    <p class="admin-subtitle">Paste the raw Telegram text below. The parser will extract structured data for the homepage. Each parse downloads a dated archive file.</p>
+    <p class="admin-subtitle">Paste the raw Telegram text below. The parser will extract structured data and publish it to the website.</p>
 
     <div class="admin-form">
       <label for="raw">Raw Telegram Text</label>
@@ -17,11 +17,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
       <div class="admin-actions">
         <button id="parseBtn" class="parse-btn">Parse & Preview</button>
+        <button id="publishBtn" class="publish-btn" style="display: none;">Publish to Website</button>
         <button type="button" class="clear-btn" id="clearBtn">Clear</button>
       </div>
     </div>
 
     <div id="errorBox" class="error-box" style="display: none;"></div>
+    <div id="successBox" class="success-box" style="display: none;"></div>
 
     <div id="previewArea" style="display: none;">
       <div class="preview-grid">
@@ -49,7 +51,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
         <div class="preview-card full-width">
           <h3>Generated JSON</h3>
-          <p class="hint">Copy this into <code>src/data/market-report.json</code></p>
+          <p class="hint">This will be sent to the API and stored in BigQuery</p>
           <pre class="json-output" id="pvJson"></pre>
         </div>
       </div>
@@ -58,24 +60,34 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   <script is:inline src="/assets/js/parse-market-report.browser.js"></script>
   <script is:inline>
+    var API_URL = (typeof window !== 'undefined' && window.API_URL) ? window.API_URL : '';
+    var currentJson = '';
+
     document.getElementById('parseBtn').addEventListener('click', function () {
       var raw = document.getElementById('raw').value;
       var errorBox = document.getElementById('errorBox');
+      var successBox = document.getElementById('successBox');
       var previewArea = document.getElementById('previewArea');
+      var publishBtn = document.getElementById('publishBtn');
+
+      errorBox.style.display = 'none';
+      successBox.style.display = 'none';
 
       if (!raw.trim()) {
         errorBox.textContent = 'Please paste some Telegram text first.';
         errorBox.style.display = 'block';
         previewArea.style.display = 'none';
+        publishBtn.style.display = 'none';
         return;
       }
 
       try {
         var parsed = window.parseMarketReport(raw);
-        var json = JSON.stringify(parsed, null, 2);
+        currentJson = JSON.stringify(parsed, null, 2);
 
         errorBox.style.display = 'none';
         previewArea.style.display = 'block';
+        publishBtn.style.display = 'inline-block';
 
         document.getElementById('pvDate').textContent = parsed.report_date || '—';
         document.getElementById('pvMarket').textContent = parsed.market + ', ' + parsed.state;
@@ -92,21 +104,61 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           tbody.appendChild(tr);
         });
 
-        document.getElementById('pvJson').textContent = json;
-
-        var datePart = parsed.report_date ? parsed.report_date.replace(/\./g, '-') : 'unknown-date';
-        window.downloadJson('market-report-' + datePart + '.json', json);
+        document.getElementById('pvJson').textContent = currentJson;
       } catch (e) {
         errorBox.textContent = 'Parse error: ' + (e.message || e);
         errorBox.style.display = 'block';
         previewArea.style.display = 'none';
+        publishBtn.style.display = 'none';
       }
+    });
+
+    document.getElementById('publishBtn').addEventListener('click', function () {
+      var errorBox = document.getElementById('errorBox');
+      var successBox = document.getElementById('successBox');
+      var publishBtn = document.getElementById('publishBtn');
+
+      if (!currentJson || !API_URL) {
+        errorBox.textContent = 'API not configured. Cannot publish.';
+        errorBox.style.display = 'block';
+        return;
+      }
+
+      publishBtn.disabled = true;
+      publishBtn.textContent = 'Publishing...';
+
+      fetch(API_URL + '/api/reports', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: currentJson,
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.status === 'ok') {
+          successBox.textContent = 'Published! ' + data.prices_count + ' prices saved for ' + data.report_date + '.';
+          successBox.style.display = 'block';
+          errorBox.style.display = 'none';
+          publishBtn.textContent = 'Published';
+          publishBtn.style.background = '#059669';
+        } else {
+          throw new Error(data.detail || 'Unknown error');
+        }
+      })
+      .catch(function(e) {
+        errorBox.textContent = 'Publish failed: ' + (e.message || e);
+        errorBox.style.display = 'block';
+        publishBtn.disabled = false;
+        publishBtn.textContent = 'Publish to Website';
+      });
     });
 
     document.getElementById('clearBtn').addEventListener('click', function () {
       document.getElementById('raw').value = '';
       document.getElementById('errorBox').style.display = 'none';
+      document.getElementById('successBox').style.display = 'none';
       document.getElementById('previewArea').style.display = 'none';
+      document.getElementById('publishBtn').style.display = 'none';
+      currentJson = '';
     });
   </script>
 </BaseLayout>
