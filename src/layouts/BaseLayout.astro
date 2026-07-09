@@ -6,6 +6,7 @@ interface Props {
 }
 
 const { title, description, canonical = 'https://devikaexim.in' } = Astro.props;
+const API_URL = import.meta.env.PUBLIC_API_URL || '';
 ---
 
 <!DOCTYPE html>
@@ -94,6 +95,10 @@ const { title, description, canonical = 'https://devikaexim.in' } = Astro.props;
   </main>
 
   <script src="/assets/js/index.js" is:inline></script>
+  <span id="api-url" style="display: none;">{API_URL}</span>
+  <script is:inline>
+    window.API_URL = document.getElementById('api-url').textContent;
+  </script>
   <script is:inline>
     document.getElementById('mobileToggle').addEventListener('click', function () {
       document.getElementById('mainNav').classList.toggle('nav-open');
