@@ -82,6 +82,14 @@ function parsePriceRangeFromText(text: string): { min: number; max: number } | n
   return null;
 }
 
+function toQuintal(prices: { min: number; max: number } | null): { min: number; max: number } | null {
+  if (!prices) return null;
+  const threshold = 1000;
+  const min = prices.min < threshold ? prices.min * 100 : prices.min;
+  const max = prices.max < threshold ? prices.max * 100 : prices.max;
+  return { min, max };
+}
+
 function detectCategory(line: string): string {
   const upper = line.toUpperCase();
   if (upper.includes('NON AC') || upper.includes('NONAC')) return 'NON AC';
@@ -154,7 +162,62 @@ export function parseMarketReport(raw: string): MarketReport {
     }
 
     const compactClean = clean.replace(/[\s,]/g, '');
-    const hasPriceRange = /[\d]+\/[\d]+/.test(compactClean) || /[\d]+\-[\d]+/.test(compactClean) || /^\d+$/.test(compactClean.replace(/[^\d]/g, ''));
+    let hasPriceRange = /[\d]+\/[\d]+/.test(compactClean) || /[\d]+\-[\d]+/.test(compactClean) || /^\d+$/.test(compactClean.replace(/[^\d]/g, ''));
+
+    if (!hasPriceRange && clean.length > 1 && clean.length < 30 && !/^(DELUXE SOME|MOSTLY|MARKET|GOOD SALES|LESS DELUXE|TEJA DELUXE)/i.test(clean)) {
+      if (i + 1 < lines.length) {
+        const nextLine = lines[i + 1];
+        const nextClean = nextLine.replace(/^[*•💥🪷🌶️🗒️]+/, '').trim();
+        const nextCompact = nextClean.replace(/[\s,]/g, '');
+        const nextHasPrice = /[\d]+\/[\d]+/.test(nextCompact) || /[\d]+\-[\d]+/.test(nextCompact);
+        const nextNotHeader = !nextClean.match(/^(ANDHRA|ANDHRA PRADESH|GUNTUR|ARRIVALS|MARKET\s+(STEADY|WEAK|UP|DOWN))/i);
+
+        if (nextHasPrice && nextNotHeader && !/^[*•💥🪷🌶️🗒️()]+$/.test(nextLine)) {
+          const combined = clean + ' ' + nextClean;
+          const combinedCompact = combined.replace(/[\s,]/g, '');
+          hasPriceRange = /[\d]+\/[\d]+/.test(combinedCompact) || /[\d]+\-[\d]+/.test(combinedCompact);
+
+          if (hasPriceRange) {
+            currentCategory = detectCategory(combined);
+            let varietyRaw = '';
+            let pricePart = '';
+
+            if (combined.includes('=')) {
+              const eqParts = combined.split('=');
+              varietyRaw = eqParts[0].trim();
+              pricePart = eqParts.slice(1).join('=').trim();
+            } else {
+              const priceMatch2 = combined.match(/([\d,]+\/[\d,]+(?:\/[\d,]+)*|[\d]+\-[\d]+)\s*$/);
+              if (priceMatch2) {
+                pricePart = priceMatch2[1].trim();
+                varietyRaw = combined.slice(0, combined.length - priceMatch2[0].length).trim();
+              }
+            }
+
+            varietyRaw = varietyRaw.replace(/[^\w\s&().\-/]/g, '').trim();
+            const variety = normalizeVariety(varietyRaw);
+            const prices = toQuintal(parsePriceRangeFromText(pricePart || combined));
+            const note = extractNote(combined);
+
+            const isKnownVariety = VARIANT_MAP[varietyRaw.toLowerCase()] !== undefined;
+            const looksLikeVariety = varietyRaw.length > 1 && varietyRaw.length < 30 && !/^(DELUXE SOME|MOSTLY|MARKET|GOOD SALES|LESS DELUXE|TEJA DELUXE)/i.test(varietyRaw);
+
+            if (prices && variety && (isKnownVariety || looksLikeVariety)) {
+              result.prices.push({
+                category: currentCategory,
+                variety,
+                ...prices,
+                note,
+              });
+            } else if (prices && variety) {
+              result.summary.push(combined.replace(/^\*+|\*+$/g, '').trim());
+            }
+            i++;
+            continue;
+          }
+        }
+      }
+    }
 
     if (hasPriceRange) {
       currentCategory = detectCategory(clean);
@@ -182,8 +245,21 @@ export function parseMarketReport(raw: string): MarketReport {
 
       varietyRaw = varietyRaw.replace(/[^\w\s&().\-/]/g, '').trim();
       const variety = normalizeVariety(varietyRaw);
-      const prices = parsePriceRangeFromText(pricePart || clean);
+      let prices = toQuintal(parsePriceRangeFromText(pricePart || clean));
       const note = extractNote(clean);
+
+      if (!prices && varietyRaw.length > 1 && i + 1 < lines.length) {
+        const nextLine = lines[i + 1];
+        const nextClean = nextLine.replace(/^[*•💥🪷🌶️🗒️]+/, '').trim();
+        const nextCompact = nextClean.replace(/[\s,]/g, '');
+        const nextHasPrice = /[\d]+\/[\d]+/.test(nextCompact) || /[\d]+\-[\d]+/.test(nextCompact);
+        const nextNotHeader = !nextClean.match(/^(ANDHRA|ANDHRA PRADESH|GUNTUR|ARRIVALS|MARKET\s+(STEADY|WEAK|UP|DOWN))/i);
+
+        if (nextHasPrice && nextNotHeader && !/^[*•💥🪷🌶️🗒️()]+$/.test(nextLine)) {
+          prices = toQuintal(parsePriceRangeFromText(nextClean));
+          i++;
+        }
+      }
 
       const isKnownVariety = VARIANT_MAP[varietyRaw.toLowerCase()] !== undefined;
       const looksLikeVariety = varietyRaw.length > 1 && varietyRaw.length < 30 && !/^(DELUXE SOME|MOSTLY|MARKET|GOOD SALES|LESS DELUXE|TEJA DELUXE)/i.test(varietyRaw);

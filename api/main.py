@@ -1,5 +1,6 @@
 import os
 import re
+import json
 from datetime import datetime
 from typing import Optional, List, Dict, Any
 
@@ -10,11 +11,17 @@ from typing import Optional, List, Dict, Any
 
 from google.cloud import bigquery
 
+try:
+    from openai import OpenAI
+except ImportError:
+    OpenAI = None
+
 # ─── Config ───────────────────────────────────────────────────────────────────
 
 PROJECT_ID = os.getenv("GCP_PROJECT_ID", "devikaexim")
 DATASET_ID = os.getenv("BQ_DATASET", "market")
 TABLE_ID = os.getenv("BQ_TABLE", "chilli_prices")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 
 # ─── BigQuery client ──────────────────────────────────────────────────────────
 
@@ -499,6 +506,78 @@ def ingest_report(request: ReportRequest):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+class ParseRequest(BaseModel):
+    raw_text: str
+
+
+@app.post("/api/reports/parse")
+def parse_report_with_llm(request: ParseRequest):
+    if not OPENAI_API_KEY or not OpenAI:
+        raise HTTPException(status_code=500, detail="LLM parsing not configured")
+
+    try:
+        import os as _os
+        for _key in ['HTTP_PROXY', 'HTTPS_PROXY', 'OPENAI_PROXY', 'ALL_PROXY', 'NO_PROXY']:
+            _os.environ.pop(_key, None)
+        client = OpenAI(api_key=OPENAI_API_KEY)
+        
+        prompt = """Parse this Guntur chilli market report and return a JSON object with this exact schema:
+{
+  "report_date": "DD.MM.YYYY",
+  "market": "Guntur",
+  "state": "Andhra Pradesh",
+  "arrivals": {"ac": "40,000 bags approx", "non_ac": "..."},
+  "prices": [
+    {"category": "AC", "variety": "TEJA", "min": 18000, "max": 22000, "mid": 20000, "note": "General market"}
+  ],
+  "summary": ["Mostly medium/medium best"],
+  "market_status": "steady"
+}
+
+Rules:
+- report_date format: DD.MM.YYYY
+- market is always "Guntur", state is always "Andhra Pradesh"
+- arrivals: extract AC and NON AC bag counts
+- prices: extract min/max/mid prices in RUPEES PER QUINTAL (multiply kg prices by 100)
+- category: "AC" or "NON AC"
+- variety: normalize to standard names (TEJA, 341, ARMOUR, 334/SANNAM, BYADGI, DD, BANGARAM, ROMI, NO 5, 2043, BULLET, CLASSIC, SEED, FATKI, etc.)
+- note: extract any notes like "General market", "Deluxe Qlts not available", etc.
+- summary: extract market summary points
+- market_status: one of "steady", "weak", "up", "down"
+
+Raw text:
+""" + request.raw_text
+
+        response = client.responses.create(
+            model="gpt-4o-mini",
+            input=[
+                {"role": "system", "content": "You are a market report parser. Return only valid JSON, no markdown, no explanations."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0
+        )
+
+        content = response.output[0].content[0].text
+        # Remove markdown code blocks if present
+        if content.startswith("```json"):
+            content = content[7:]
+        if content.startswith("```"):
+            content = content[3:]
+        if content.endswith("```"):
+            content = content[:-3]
+        content = content.strip()
+
+        parsed = json.loads(content)
+        return parsed
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"LLM parse error: {str(e)}")
 
 
 @app.get("/api/prices/history")
