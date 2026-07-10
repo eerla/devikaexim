@@ -3,7 +3,7 @@ import csv
 import re
 from datetime import datetime
 
-INPUT_FILE = r'C:\Users\gurub\projects\devikaexim\dist\gunturmirchi_sheet_data.json'
+INPUT_FILE = r'C:\Users\gurub\projects\devikaexim\src\data\gunturmirchi_sheet_data.json'
 OUTPUT_FILE = r'C:\Users\gurub\projects\devikaexim\dist\historical_prices.json'
 
 def parse_date(date_str):

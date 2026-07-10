@@ -465,6 +465,33 @@ def get_varieties():
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@app.get("/api/prices/trends")
+def get_price_trends():
+    try:
+        client = get_bq_client()
+        query = f"""
+            WITH monthly AS (
+              SELECT
+                FORMAT_DATE('%Y-%m', date) AS month,
+                variety,
+                grade,
+                AVG((min_price + max_price) / 2) AS avg_price
+              FROM `{PROJECT_ID}.{DATASET_ID}.historical_prices`
+              WHERE variety IN ('Teja', '334/Sannam', 'Byadgi', '341', 'DD', 'Armoor')
+                AND grade = 'Best'
+              GROUP BY month, variety, grade
+            )
+            SELECT month, variety, grade, avg_price
+            FROM monthly
+            ORDER BY month ASC, variety ASC
+        """
+        results = client.query(query).result()
+        rows = [dict(row.items()) for row in results]
+        return {"data": rows}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @app.get("/api/prices/latest")
 def get_latest_prices():
     try:
