@@ -82,6 +82,7 @@ const API_URL = import.meta.env.PUBLIC_API_URL || '';
                 grid: { display: false }
               },
               y: {
+                title: { display: true, text: '₹ per quintal', color: '#898781' },
                 ticks: {
                   color: '#898781',
                   callback: function(v) { return '\u20b9' + (v/1000) + 'k'; }
