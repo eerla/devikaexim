@@ -35,6 +35,30 @@ VARIANT_MAP = {
     'classic': 'Classic', 'fatki': 'FATKI', 'deluxe': 'DELUXE',
 }
 
+HISTORICAL_VARIETY_MAP = {
+    'TEJA': 'Teja',
+    '341': '341',
+    'ARMOUR': 'Armoor',
+    'ARMOUR (TOP GUN)': 'Armoor',
+    '334': '334/Sannam',
+    '334 S.10': '334/S10',
+    'SHARK': '334/Sannam',
+    'SHARK & SHARP': '334/Sannam',
+    'SYNGENTA BALLARY': '334/Sannam',
+    'SYNGENTA DESAVALI': '334/Sannam',
+    'BYADGI': 'Byadgi',
+    '355 BYADGI': 'Byadgi',
+    'DD': 'DD',
+    'BULLET': 'DD',
+    'BANGARAM': 'DD',
+    'ROMI': 'DD',
+    'NO 5': 'DD',
+    '2043': 'DD',
+    'FATKI': '334/S10',
+    'SEED': 'Seed',
+    'GANESH ARMOUR': 'Armoor',
+}
+
 def normalize_variety(raw: str) -> str:
     lower = raw.lower().strip()
     return VARIANT_MAP.get(lower, raw.strip().upper())
@@ -268,6 +292,79 @@ def write_report(client: bigquery.Client, report: Dict[str, Any]) -> int:
     errors = client.insert_rows_json(table_ref, rows_to_insert)
     if errors:
         raise Exception(f"BigQuery insert errors: {errors}")
+
+    historical_count = write_historical_report(client, report)
+
+    return {
+        'chilli_prices_count': len(rows_to_insert),
+        'historical_count': historical_count,
+    }
+
+
+def ensure_historical_table(client: bigquery.Client):
+    dataset_ref = client.dataset(DATASET_ID)
+    table_ref = dataset_ref.table('historical_prices')
+    try:
+        client.get_table(table_ref)
+    except Exception:
+        schema = [
+            bigquery.SchemaField('date', 'DATE', mode='REQUIRED'),
+            bigquery.SchemaField('variety', 'STRING', mode='REQUIRED'),
+            bigquery.SchemaField('grade', 'STRING', mode='REQUIRED'),
+            bigquery.SchemaField('min_price', 'INT64'),
+            bigquery.SchemaField('max_price', 'INT64'),
+        ]
+        table = bigquery.Table(table_ref, schema=schema)
+        client.create_table(table)
+        print("Created table historical_prices")
+
+
+def write_historical_report(client: bigquery.Client, report: Dict[str, Any]) -> int:
+    ensure_historical_table(client)
+    rows_to_insert = []
+
+    date_str = report.get('report_date', '')
+    iso_date = None
+    if date_str:
+        for fmt in ('%d.%m.%Y', '%m.%d.%Y', '%Y-%m-%d'):
+            try:
+                iso_date = datetime.strptime(date_str, fmt).strftime('%Y-%m-%d')
+                break
+            except ValueError:
+                continue
+
+    if not iso_date:
+        return 0
+
+    for price in report.get('prices', []):
+        variety_raw = price.get('variety', '').strip()
+        historical_variety = HISTORICAL_VARIETY_MAP.get(variety_raw)
+        if not historical_variety:
+            continue
+
+        grade = 'Best'
+        note = (price.get('note') or '').lower()
+        if 'medium best' in note:
+            grade = 'Medium Best'
+        elif 'medium' in note:
+            grade = 'Medium'
+        elif 'deluxe' in note:
+            grade = 'Deluxe'
+
+        rows_to_insert.append({
+            'date': iso_date,
+            'variety': historical_variety,
+            'grade': grade,
+            'min_price': price.get('min'),
+            'max_price': price.get('max'),
+        })
+
+    if rows_to_insert:
+        table_ref = f"{PROJECT_ID}.{DATASET_ID}.historical_prices"
+        errors = client.insert_rows_json(table_ref, rows_to_insert)
+        if errors:
+            raise Exception(f"BigQuery historical insert errors: {errors}")
+
     return len(rows_to_insert)
 
 
@@ -389,35 +486,14 @@ def ingest_report(request: ReportRequest):
         if not report['report_date']:
             raise HTTPException(status_code=400, detail="Could not parse report date")
         client = get_bq_client()
-        rows_written = write_report(client, report)
+        result = write_report(client, report)
         return {
             "status": "ok",
             "report_date": report['report_date'],
             "prices_count": len(report['prices']),
             "summary_count": len(report['summary']),
-            "rows_written": rows_written,
-        }
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@app.post("/api/reports/json")
-def ingest_parsed_report(report: ParsedReport):
-    if not report.report_date.strip():
-        raise HTTPException(status_code=400, detail="report_date is required")
-
-    try:
-        client = get_bq_client()
-        report_dict = report.dict()
-        rows_written = write_report(client, report_dict)
-        return {
-            "status": "ok",
-            "report_date": report.report_date,
-            "prices_count": len(report.prices),
-            "summary_count": len(report.summary),
-            "rows_written": rows_written,
+            "rows_written": result['chilli_prices_count'],
+            "historical_rows_written": result['historical_count'],
         }
     except HTTPException:
         raise
@@ -496,7 +572,17 @@ def get_price_trends():
 def get_latest_prices():
     try:
         client = get_bq_client()
-        report = fetch_latest_prices(client)
-        return report
+        report_dict = report.dict()
+        result = write_report(client, report_dict)
+        return {
+            "status": "ok",
+            "report_date": report.report_date,
+            "prices_count": len(report.prices),
+            "summary_count": len(report.summary),
+            "rows_written": result['chilli_prices_count'],
+            "historical_rows_written": result['historical_count'],
+        }
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

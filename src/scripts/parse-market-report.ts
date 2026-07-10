@@ -20,22 +20,35 @@ export interface MarketReport {
 
 const VARIANT_MAP: Record<string, string> = {
   'teja': 'TEJA',
+  'teja fatki': 'TEJA FATKI',
   '341': '341',
+  '341 deshawali': '341 DESHAWALI',
   'armour': 'Armour',
   'armoor': 'Armour',
+  'armoor (top gun)': 'Armour (Top Gun)',
   '334': '334',
+  '334 s.10': '334 S.10',
+  's10': '334 S.10',
+  '273': '334',
   'shark': 'Shark',
   'syngenta ballary': 'Syngenta ballary',
   'syngenta desavali': 'Syngenta desavali',
   'romi 26': 'ROMI 26',
   'no 5': 'NO 5',
+  'no5': 'NO 5',
   '2043': '2043',
   'dd': 'DD',
   'bullet': 'Bullet',
   'bangaram': 'Bangaram',
   '355 byadgi': '355 byadgi',
-  'seed': 'SEED',
+  '5531 byd': '355 byadgi',
+  'byd': 'Byadgi',
+  'byadgi': 'Byadgi',
+  'classic': 'Classic',
+  'fatki': 'FATKI',
+  'deluxe': 'DELUXE',
   'ganesh armour': 'Ganesh Armour',
+  'all fatkis': 'All Fatkis',
 };
 
 function normalizeVariety(raw: string): string {
@@ -49,10 +62,22 @@ function parsePriceRange(text: string): { min: number; max: number; mid?: number
   const parts = cleaned.split('/').map(p => parseInt(p.trim(), 10)).filter(n => !isNaN(n));
   if (parts.length === 0) return null;
   if (parts.length === 1) return { min: parts[0], max: parts[0] };
-  if (parts.length === 2) return { min: Math.min(...parts), max: Math.max(...parts) };
-  if (parts.length >= 3) {
-    const sorted = [...parts].sort((a, b) => a - b);
-    return { min: sorted[0], max: sorted[sorted.length - 1], mid: sorted[1] };
+  if (parts.length === 2) return { min: Math.min(parts[0], parts[1]), max: Math.max(parts[0], parts[1]) };
+  const sorted = [...parts].sort((a, b) => a - b);
+  return { min: sorted[0], max: sorted[sorted.length - 1], mid: sorted[1] };
+}
+
+function parsePriceRangeFromText(text: string): { min: number; max: number } | null {
+  const cleaned = text.replace(/[\s,]/g, '');
+  const match = cleaned.match(/(\d+)\s*[\/\-]\s*(\d+)/);
+  if (match) {
+    const min = parseInt(match[1], 10);
+    const max = parseInt(match[2], 10);
+    return { min: Math.min(min, max), max: Math.max(min, max) };
+  }
+  const single = cleaned.match(/(\d+)/);
+  if (single) {
+    return { min: parseInt(single[1], 10), max: parseInt(single[1], 10) };
   }
   return null;
 }
@@ -60,12 +85,12 @@ function parsePriceRange(text: string): { min: number; max: number; mid?: number
 function detectCategory(line: string): string {
   const upper = line.toUpperCase();
   if (upper.includes('NON AC') || upper.includes('NONAC')) return 'NON AC';
-  if (upper.includes('AC ')) return 'AC';
-  return 'Unknown';
+  if (upper.includes('AC ') || upper.includes('A/C')) return 'AC';
+  return 'AC';
 }
 
 function extractNote(line: string): string | undefined {
-  const notes = ['Deluxe Qlts not available', 'No Deluxe', 'Deluxe Less Qlts in market', 'General market'];
+  const notes = ['Deluxe Qlts not available', 'No Deluxe', 'Deluxe Less Qlts in market', 'General market', 'GOOD SALES VERY LESS DELUXE QUALITIES'];
   for (const note of notes) {
     if (line.toLowerCase().includes(note.toLowerCase())) return note;
   }
@@ -84,7 +109,7 @@ export function parseMarketReport(raw: string): MarketReport {
     summary: [],
   };
 
-  let currentCategory = 'Unknown';
+  let currentCategory = 'AC';
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
@@ -92,8 +117,9 @@ export function parseMarketReport(raw: string): MarketReport {
 
     if (!clean || clean === 'TMPMIRCHI MARKET REPORTS' || clean === 'BHARAT') continue;
 
-    if (clean.match(/\d{2}\.\d{2}\.\d{4}/)) {
-      result.report_date = clean.match(/\d{2}\.\d{2}\.\d{4}/)?.[0] || result.report_date;
+    const dateMatch = clean.match(/(\d{1,2})[.\-](\d{1,2})[.\-](\d{4})/);
+    if (dateMatch) {
+      result.report_date = dateMatch[0];
       continue;
     }
 
@@ -104,13 +130,13 @@ export function parseMarketReport(raw: string): MarketReport {
     }
 
     if (clean.match(/ARRIVALS/i)) {
-      const numMatch = clean.match(/([\d,]+)\s*bags/i);
+      const numMatch = clean.match(/([\d,]+)\/[\d,]*\s*bags/i);
       const num = numMatch ? numMatch[1] : '';
       if (clean.match(/NON.?AC/i)) {
         result.arrivals.non_ac = num ? `${num} bags approx` : clean;
-      } else if (clean.match(/^AC\s/i)) {
+      } else if (clean.match(/A?\/?\s*C/i)) {
         result.arrivals.ac = num ? `${num} bags approx` : clean;
-      } else if (!result.arrivals.ac && clean.match(/AC/i)) {
+      } else if (!result.arrivals.ac) {
         result.arrivals.ac = num ? `${num} bags approx` : clean;
       }
       continue;
@@ -128,33 +154,61 @@ export function parseMarketReport(raw: string): MarketReport {
     }
 
     const compactClean = clean.replace(/[\s,]/g, '');
-    const hasPriceRange = /[\d]+\/[\d]+/.test(compactClean) || /^\d+$/.test(compactClean);
-    const isPriceLine = clean.includes('QLTS') || clean.includes('QLTY') || clean.includes('TALU');
+    const hasPriceRange = /[\d]+\/[\d]+/.test(compactClean) || /[\d]+\-[\d]+/.test(compactClean) || /^\d+$/.test(compactClean.replace(/[^\d]/g, ''));
 
-    if (hasPriceRange && isPriceLine) {
+    if (hasPriceRange) {
       currentCategory = detectCategory(clean);
-      const priceMatch = clean.match(/([\d,]+\/[\d,]+(?:\/[\d,]+)*)\s*$/);
-      const varietyRaw = priceMatch
-        ? clean.slice(0, clean.length - priceMatch[0].length).trim().replace(/[^\w\s&().\-/]/g, '').trim()
-        : clean.replace(/\s*(QLTS?|QLTY|TALU)\s*$/i, '').trim();
+      let varietyRaw = '';
+      let pricePart = '';
+
+      if (clean.includes('=')) {
+        const eqParts = clean.split('=');
+        varietyRaw = eqParts[0].trim();
+        pricePart = eqParts.slice(1).join('=').trim();
+      } else if (clean.includes(':')) {
+        const parts = clean.split(':');
+        varietyRaw = parts[0].trim();
+        pricePart = parts.slice(1).join(':').trim();
+      } else {
+        const priceMatch = clean.match(/([\d,]+\/[\d,]+(?:\/[\d,]+)*|[\d]+\-[\d]+)\s*$/);
+        if (priceMatch) {
+          pricePart = priceMatch[1].trim();
+          varietyRaw = clean.slice(0, clean.length - priceMatch[0].length).trim();
+        } else {
+          varietyRaw = clean;
+          pricePart = '';
+        }
+      }
+
+      varietyRaw = varietyRaw.replace(/[^\w\s&().\-/]/g, '').trim();
       const variety = normalizeVariety(varietyRaw);
-      const prices = parsePriceRange(priceMatch ? priceMatch[1] : clean);
+      const prices = parsePriceRangeFromText(pricePart || clean);
       const note = extractNote(clean);
 
-      if (prices && variety) {
+      const isKnownVariety = VARIANT_MAP[varietyRaw.toLowerCase()] !== undefined;
+      const looksLikeVariety = varietyRaw.length > 1 && varietyRaw.length < 30 && !/^(DELUXE SOME|MOSTLY|MARKET|GOOD SALES|LESS DELUXE|TEJA DELUXE)/i.test(varietyRaw);
+
+      if (prices && variety && (isKnownVariety || looksLikeVariety)) {
         result.prices.push({
           category: currentCategory,
           variety,
           ...prices,
           note,
         });
+      } else if (prices && variety) {
+        result.summary.push(clean.replace(/^\*+|\*+$/g, '').trim());
       }
+      continue;
+    }
+
+    if (clean.match(/^(DELUXE|MOSTLY|MARKET|TEJA DELUXE)\s/i)) {
+      result.summary.push(clean.replace(/^\*+|\*+$/g, '').trim());
       continue;
     }
   }
 
   if (!result.report_date) {
-    const dateMatch = raw.match(/(\d{2})\.(\d{2})\.(\d{4})/);
+    const dateMatch = raw.match(/(\d{1,2})[.\-](\d{1,2})[.\-](\d{4})/);
     if (dateMatch) result.report_date = dateMatch[0];
   }
 

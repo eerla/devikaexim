@@ -137,7 +137,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       .then(function(r) { return r.json(); })
       .then(function(data) {
         if (data.status === 'ok') {
-          successBox.textContent = 'Published! ' + data.prices_count + ' prices saved for ' + data.report_date + '.';
+          var msg = 'Published! ' + data.prices_count + ' prices saved for ' + data.report_date + '.';
+          if (data.historical_rows_written) {
+            msg += ' ' + data.historical_rows_written + ' rows added to historical prices.';
+          }
+          successBox.textContent = msg;
           successBox.style.display = 'block';
           errorBox.style.display = 'none';
           publishBtn.textContent = 'Published';
