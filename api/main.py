@@ -425,6 +425,46 @@ def ingest_parsed_report(report: ParsedReport):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@app.get("/api/prices/history")
+def get_price_history(variety: str = 'Teja', days: int = 90):
+    try:
+        client = get_bq_client()
+        query = f"""
+            SELECT date, variety, grade, min_price, max_price
+            FROM `{PROJECT_ID}.{DATASET_ID}.historical_prices`
+            WHERE variety = @variety
+              AND date >= DATE_SUB(CURRENT_DATE(), INTERVAL @days DAY)
+            ORDER BY date ASC, grade ASC
+        """
+        job_config = bigquery.QueryJobConfig(
+            query_parameters=[
+                bigquery.ScalarQueryParameter("variety", "STRING", variety),
+                bigquery.ScalarQueryParameter("days", "INT64", days),
+            ]
+        )
+        results = client.query(query, job_config=job_config).result()
+        rows = [dict(row.items()) for row in results]
+        return {"variety": variety, "days": days, "data": rows}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/prices/varieties")
+def get_varieties():
+    try:
+        client = get_bq_client()
+        query = f"""
+            SELECT DISTINCT variety, grade
+            FROM `{PROJECT_ID}.{DATASET_ID}.historical_prices`
+            ORDER BY variety, grade
+        """
+        results = client.query(query).result()
+        rows = [dict(row.items()) for row in results]
+        return {"varieties": rows}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @app.get("/api/prices/latest")
 def get_latest_prices():
     try:
