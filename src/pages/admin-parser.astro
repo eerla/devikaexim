@@ -81,36 +81,55 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         return;
       }
 
-      try {
-        var parsed = window.parseMarketReport(raw);
+      parseBtn = document.getElementById('parseBtn');
+      parseBtn.disabled = true;
+      parseBtn.textContent = 'Parsing with AI...';
+
+      fetch(API_URL + '/api/reports/parse', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ raw_text: raw }),
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(parsed) {
         currentJson = JSON.stringify(parsed, null, 2);
+        window.currentRawText = raw;
 
         errorBox.style.display = 'none';
         previewArea.style.display = 'block';
         publishBtn.style.display = 'inline-block';
 
         document.getElementById('pvDate').textContent = parsed.report_date || '—';
-        document.getElementById('pvMarket').textContent = parsed.market + ', ' + parsed.state;
-        document.getElementById('pvArrivals').textContent = 'Non-AC: ' + (parsed.arrivals.non_ac || '—') + ' | AC: ' + (parsed.arrivals.ac || '—');
-        document.getElementById('pvPrices').textContent = parsed.prices.length + ' varieties';
+        document.getElementById('pvMarket').textContent = (parsed.market || 'Guntur') + ', ' + (parsed.state || 'Andhra Pradesh');
+        document.getElementById('pvArrivals').textContent = 'Non-AC: ' + (parsed.arrivals && parsed.arrivals.non_ac ? parsed.arrivals.non_ac : '—') + ' | AC: ' + (parsed.arrivals && parsed.arrivals.ac ? parsed.arrivals.ac : '—');
+        document.getElementById('pvPrices').textContent = (parsed.prices ? parsed.prices.length : 0) + ' varieties';
         document.getElementById('pvStatus').textContent = parsed.market_status || '—';
-        document.getElementById('pvSummary').textContent = parsed.summary.length + ' items';
+        document.getElementById('pvSummary').textContent = (parsed.summary ? parsed.summary.length : 0) + ' items';
 
         var tbody = document.getElementById('pvTableBody');
         tbody.innerHTML = '';
-        parsed.prices.forEach(function(p) {
-          var tr = document.createElement('tr');
-          tr.innerHTML = '<td>' + p.category + '</td><td>' + p.variety + '</td><td>₹' + p.min.toLocaleString() + '</td><td>₹' + p.max.toLocaleString() + '</td><td>' + (p.note || '—') + '</td>';
-          tbody.appendChild(tr);
-        });
+        if (parsed.prices && parsed.prices.length) {
+          parsed.prices.forEach(function(p) {
+            var tr = document.createElement('tr');
+            tr.innerHTML = '<td>' + (p.category || '') + '</td><td>' + (p.variety || '') + '</td><td>₹' + (p.min || 0).toLocaleString() + '</td><td>₹' + (p.max || 0).toLocaleString() + '</td><td>' + (p.note || '—') + '</td>';
+            tbody.appendChild(tr);
+          });
+        } else {
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 24px; color: #6b7280;">No prices found</td></tr>';
+        }
 
         document.getElementById('pvJson').textContent = currentJson;
-      } catch (e) {
+      })
+      .catch(function(e) {
         errorBox.textContent = 'Parse error: ' + (e.message || e);
         errorBox.style.display = 'block';
         previewArea.style.display = 'none';
         publishBtn.style.display = 'none';
-      }
+      })
+      .finally(function() {
+        parseBtn.disabled = false;
+        parseBtn.textContent = 'Parse & Preview';
+      });
     });
 
     document.getElementById('publishBtn').addEventListener('click', function () {
@@ -127,7 +146,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       publishBtn.disabled = true;
       publishBtn.textContent = 'Publishing...';
 
-      fetch(API_URL + '/api/reports', {
+      fetch(API_URL + '/api/reports/json', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: currentJson,
@@ -135,7 +154,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       .then(function(r) { return r.json(); })
       .then(function(data) {
         if (data.status === 'ok') {
-          successBox.textContent = 'Published! ' + data.prices_count + ' prices saved for ' + data.report_date + '.';
+          var msg = 'Published! ' + data.prices_count + ' prices saved for ' + data.report_date + '.';
+          if (data.historical_rows_written) {
+            msg += ' ' + data.historical_rows_written + ' rows added to historical prices.';
+          }
+          successBox.textContent = msg;
           successBox.style.display = 'block';
           errorBox.style.display = 'none';
           publishBtn.textContent = 'Published';

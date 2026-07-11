@@ -1,0 +1,243 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Devika Exim - Price History"
+  description="Historical price trends for Guntur dried red chillies varieties over the last 5 years."
+  canonical="https://devikaexim.in/prices.html"
+>
+
+  <div class="price-history-container">
+    <h1>Price History</h1>
+    <p class="price-history-subtitle">Track price trends for Guntur chilli varieties over the last 5 years</p>
+
+    <div class="chart-controls">
+      <div class="control-group">
+        <label for="varietySelect">Select Variety</label>
+        <select id="varietySelect">
+          <option value="">Loading varieties...</option>
+        </select>
+      </div>
+      <div class="control-group">
+        <label for="daysSelect">Time Range</label>
+        <select id="daysSelect">
+          <option value="30">Last 30 Days</option>
+          <option value="90" selected>Last 3 Months</option>
+          <option value="180">Last 6 Months</option>
+          <option value="365">Last 1 Year</option>
+          <option value="1825">Last 5 Years</option>
+        </select>
+      </div>
+      <button id="updateChart" class="chart-btn">Update Chart</button>
+    </div>
+
+    <div id="chart_div" class="chart-wrapper">
+      <p class="chart-loading">Loading chart data...</p>
+    </div>
+
+    <div id="errorBox" class="error-box" style="display: none;"></div>
+  </div>
+
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script is:inline>
+    (function() {
+      var API_URL = window.API_URL || '';
+      if (!API_URL) {
+        document.getElementById('chart_div').innerHTML = '<p style="text-align:center; padding: 40px; color: #6b7280;">API not configured</p>';
+        return;
+      }
+
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(function() {
+        loadVarieties();
+      });
+
+      function loadVarieties() {
+        fetch(API_URL + '/api/prices/varieties')
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
+            var select = document.getElementById('varietySelect');
+            select.innerHTML = '';
+            if (data.varieties && data.varieties.length) {
+              var groups = {};
+              data.varieties.forEach(function(v) {
+                if (!groups[v.variety]) groups[v.variety] = [];
+                groups[v.variety].push(v.grade);
+              });
+              var firstVariety = '';
+              Object.keys(groups).sort().forEach(function(variety) {
+                var optgroup = document.createElement('optgroup');
+                optgroup.label = variety;
+                groups[variety].sort().forEach(function(grade) {
+                  var option = document.createElement('option');
+                  option.value = variety + '|' + grade;
+                  option.textContent = grade || variety;
+                  optgroup.appendChild(option);
+                  if (!firstVariety) firstVariety = option.value;
+                });
+                select.appendChild(optgroup);
+              });
+              if (firstVariety) select.value = firstVariety;
+            } else {
+              select.innerHTML = '<option value="">No varieties available</option>';
+            }
+          })
+          .catch(function(err) {
+            document.getElementById('varietySelect').innerHTML = '<option value="">Error loading varieties</option>';
+            console.error('Failed to load varieties:', err);
+          });
+      }
+
+      document.getElementById('updateChart').addEventListener('click', function() {
+        var select = document.getElementById('varietySelect');
+        var daysSelect = document.getElementById('daysSelect');
+        var errorBox = document.getElementById('errorBox');
+        var chartDiv = document.getElementById('chart_div');
+
+        if (!select.value) {
+          errorBox.textContent = 'Please select a variety.';
+          errorBox.style.display = 'block';
+          return;
+        }
+
+        errorBox.style.display = 'none';
+        chartDiv.innerHTML = '<p class="chart-loading">Loading chart data...</p>';
+
+        var parts = select.value.split('|');
+        var variety = parts[0];
+        var grade = parts[1] || '';
+        var days = parseInt(daysSelect.value, 10);
+
+        fetch(API_URL + '/api/prices/history?variety=' + encodeURIComponent(variety) + '&days=' + days)
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
+            if (!data.data || !data.data.length) {
+              chartDiv.innerHTML = '<p style="text-align:center; padding: 40px; color: #6b7280;">No data available for this selection</p>';
+              return;
+            }
+
+            var filtered = data.data;
+            if (grade) {
+              filtered = data.data.filter(function(d) { return d.grade === grade; });
+            }
+
+            if (!filtered.length) {
+              chartDiv.innerHTML = '<p style="text-align:center; padding: 40px; color: #6b7280;">No data for ' + variety + ' - ' + grade + '</p>';
+              return;
+            }
+
+            var chartData = new google.visualization.DataTable();
+            chartData.addColumn('string', 'Date');
+            chartData.addColumn('number', variety + (grade ? ' (' + grade + ')' : ''));
+
+            filtered.forEach(function(d) {
+              chartData.addRow([d.date, d.max_price]);
+            });
+
+            var options = {
+              title: variety + (grade ? ' - ' + grade : '') + ' Price Trend',
+              curveType: 'function',
+              legend: { position: 'bottom' },
+              hAxis: { title: 'Date' },
+              vAxis: { title: 'Price (Rs)' },
+              pointSize: 3,
+              lineWidth: 2,
+              colors: ['#D21818'],
+              chartArea: { left: 60, top: 40, right: 30, bottom: 80 }
+            };
+
+            var chart = new google.visualization.LineChart(chartDiv);
+            chart.draw(chartData, options);
+          })
+          .catch(function(err) {
+            chartDiv.innerHTML = '<p style="text-align:center; padding: 40px; color: #991b1b;">Failed to load chart data</p>';
+            console.error('Failed to fetch history:', err);
+          });
+      });
+    })();
+  </script>
+
+  <style>
+    .price-history-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    .price-history-container h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #D21818;
+      margin-bottom: 8px;
+    }
+    .price-history-subtitle {
+      font-size: 1.1rem;
+      color: #555;
+      margin-bottom: 30px;
+    }
+    .chart-controls {
+      display: flex;
+      gap: 16px;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+      padding: 20px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .control-group label {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #555;
+    }
+    .control-group select {
+      padding: 10px 14px;
+      font-size: 1rem;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      min-width: 220px;
+      background: #fff;
+    }
+    .chart-btn {
+      padding: 10px 24px;
+      font-size: 1rem;
+      font-weight: 500;
+      background: #D21818;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .chart-btn:hover {
+      background: #a81414;
+    }
+    .chart-wrapper {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      padding: 20px;
+      min-height: 400px;
+    }
+    .chart-loading {
+      text-align: center;
+      padding: 120px 20px;
+      color: #6b7280;
+      font-size: 1.1rem;
+    }
+    .error-box {
+      padding: 16px;
+      background: #fee2e2;
+      border: 1px solid #fecaca;
+      border-radius: 8px;
+      color: #991b1b;
+      margin-top: 16px;
+    }
+  </style>
+</BaseLayout>

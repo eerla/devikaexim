@@ -1,19 +1,28 @@
 import os
 import re
+import json
 from datetime import datetime
 from typing import Optional, List, Dict, Any
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from typing import Optional, List, Dict, Any
+from starlette.middleware.base import BaseHTTPMiddleware
 
 from google.cloud import bigquery
+
+try:
+    from openai import OpenAI
+except ImportError:
+    OpenAI = None
 
 # ─── Config ───────────────────────────────────────────────────────────────────
 
 PROJECT_ID = os.getenv("GCP_PROJECT_ID", "devikaexim")
 DATASET_ID = os.getenv("BQ_DATASET", "market")
 TABLE_ID = os.getenv("BQ_TABLE", "chilli_prices")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 
 # ─── BigQuery client ──────────────────────────────────────────────────────────
 
@@ -32,6 +41,30 @@ VARIANT_MAP = {
     'no.5': 'NO 5', 'no 5': 'NO 5', '2043': '2043', 'dd': 'DD',
     'bullet': 'Bullet', 'bangaram': 'Bangaram', '355 byadgi': '355 byadgi',
     'classic': 'Classic', 'fatki': 'FATKI', 'deluxe': 'DELUXE',
+}
+
+HISTORICAL_VARIETY_MAP = {
+    'TEJA': 'Teja',
+    '341': '341',
+    'ARMOUR': 'Armoor',
+    'ARMOUR (TOP GUN)': 'Armoor',
+    '334': '334/Sannam',
+    '334 S.10': '334/S10',
+    'SHARK': '334/Sannam',
+    'SHARK & SHARP': '334/Sannam',
+    'SYNGENTA BALLARY': '334/Sannam',
+    'SYNGENTA DESAVALI': '334/Sannam',
+    'BYADGI': 'Byadgi',
+    '355 BYADGI': 'Byadgi',
+    'DD': 'DD',
+    'BULLET': 'DD',
+    'BANGARAM': 'DD',
+    'ROMI': 'DD',
+    'NO 5': 'DD',
+    '2043': 'DD',
+    'FATKI': '334/S10',
+    'SEED': 'Seed',
+    'GANESH ARMOUR': 'Armoor',
 }
 
 def normalize_variety(raw: str) -> str:
@@ -267,10 +300,83 @@ def write_report(client: bigquery.Client, report: Dict[str, Any]) -> int:
     errors = client.insert_rows_json(table_ref, rows_to_insert)
     if errors:
         raise Exception(f"BigQuery insert errors: {errors}")
+
+    historical_count = write_historical_report(client, report)
+
+    return {
+        'chilli_prices_count': len(rows_to_insert),
+        'historical_count': historical_count,
+    }
+
+
+def ensure_historical_table(client: bigquery.Client):
+    dataset_ref = client.dataset(DATASET_ID)
+    table_ref = dataset_ref.table('historical_prices')
+    try:
+        client.get_table(table_ref)
+    except Exception:
+        schema = [
+            bigquery.SchemaField('date', 'DATE', mode='REQUIRED'),
+            bigquery.SchemaField('variety', 'STRING', mode='REQUIRED'),
+            bigquery.SchemaField('grade', 'STRING', mode='REQUIRED'),
+            bigquery.SchemaField('min_price', 'INT64'),
+            bigquery.SchemaField('max_price', 'INT64'),
+        ]
+        table = bigquery.Table(table_ref, schema=schema)
+        client.create_table(table)
+        print("Created table historical_prices")
+
+
+def write_historical_report(client: bigquery.Client, report: Dict[str, Any]) -> int:
+    ensure_historical_table(client)
+    rows_to_insert = []
+
+    date_str = report.get('report_date', '')
+    iso_date = None
+    if date_str:
+        for fmt in ('%d.%m.%Y', '%m.%d.%Y', '%Y-%m-%d'):
+            try:
+                iso_date = datetime.strptime(date_str, fmt).strftime('%Y-%m-%d')
+                break
+            except ValueError:
+                continue
+
+    if not iso_date:
+        return 0
+
+    for price in report.get('prices', []):
+        variety_raw = price.get('variety', '').strip()
+        historical_variety = HISTORICAL_VARIETY_MAP.get(variety_raw)
+        if not historical_variety:
+            continue
+
+        grade = 'Best'
+        note = (price.get('note') or '').lower()
+        if 'medium best' in note:
+            grade = 'Medium Best'
+        elif 'medium' in note:
+            grade = 'Medium'
+        elif 'deluxe' in note:
+            grade = 'Deluxe'
+
+        rows_to_insert.append({
+            'date': iso_date,
+            'variety': historical_variety,
+            'grade': grade,
+            'min_price': price.get('min'),
+            'max_price': price.get('max'),
+        })
+
+    if rows_to_insert:
+        table_ref = f"{PROJECT_ID}.{DATASET_ID}.historical_prices"
+        errors = client.insert_rows_json(table_ref, rows_to_insert)
+        if errors:
+            raise Exception(f"BigQuery historical insert errors: {errors}")
+
     return len(rows_to_insert)
 
 
-def fetch_latest_prices(client: bigquery.Client) -> List[Dict[str, Any]]:
+def fetch_latest_prices(client: bigquery.Client) -> dict:
     query = f"""
         SELECT
           report_date,
@@ -284,8 +390,7 @@ def fetch_latest_prices(client: bigquery.Client) -> List[Dict[str, Any]]:
           mid_price,
           note,
           market_status,
-          summary_text,
-          ingested_at
+          summary_text
         FROM `{PROJECT_ID}.{DATASET_ID}.{TABLE_ID}`
         WHERE report_date = (
           SELECT MAX(report_date) FROM `{PROJECT_ID}.{DATASET_ID}.{TABLE_ID}`
@@ -293,12 +398,63 @@ def fetch_latest_prices(client: bigquery.Client) -> List[Dict[str, Any]]:
         ORDER BY category, variety
     """
     results = client.query(query).result()
-    rows = []
-    for row in results:
-        rows.append(dict(row.items()))
-    return rows
+    rows = [dict(row.items()) for row in results]
+
+    if not rows:
+      return {
+        'report_date': '', 'market': 'Guntur', 'state': 'Andhra Pradesh',
+        'arrivals': {}, 'prices': [], 'summary': [], 'market_status': ''
+      }
+
+    first = rows[0]
+    report = {
+      'report_date': first.get('report_date', ''),
+      'market': first.get('market', 'Guntur'),
+      'state': first.get('state', 'Andhra Pradesh'),
+      'arrivals': {},
+      'prices': [],
+      'summary': [],
+      'market_status': first.get('market_status', ''),
+    }
+
+    for row in rows:
+      if row.get('category') == 'SUMMARY':
+        text = row.get('summary_text', '')
+        if text:
+          report['summary'].append(text)
+        continue
+
+      arrivals_raw = row.get('arrivals') or '{}'
+      if isinstance(arrivals_raw, str):
+        try:
+          report['arrivals'] = eval(arrivals_raw)
+        except Exception:
+          report['arrivals'] = {}
+
+      if row.get('category') in ('AC', 'NON AC') and row.get('variety'):
+        report['prices'].append({
+          'category': row.get('category', ''),
+          'variety': row.get('variety', ''),
+          'min': row.get('min_price') or 0,
+          'max': row.get('max_price') or 0,
+          'mid': row.get('mid_price'),
+          'note': row.get('note'),
+        })
+
+    return report
 
 # ─── FastAPI app ──────────────────────────────────────────────────────────────
+
+from starlette.middleware.base import BaseHTTPMiddleware
+
+class ExplicitCORSMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request, call_next):
+        response = await call_next(request)
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        return response
+
 
 app = FastAPI(title="Devika Exim Market API")
 
@@ -309,6 +465,27 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.add_middleware(ExplicitCORSMiddleware)
+
+
+class PriceItem(BaseModel):
+    category: str
+    variety: str
+    min: Optional[int] = None
+    max: Optional[int] = None
+    mid: Optional[int] = None
+    note: Optional[str] = None
+
+
+class ParsedReport(BaseModel):
+    report_date: str
+    market: str = 'Guntur'
+    state: str = 'Andhra Pradesh'
+    arrivals: Dict[str, Any] = Field(default_factory=dict)
+    prices: List[PriceItem] = Field(default_factory=list)
+    summary: List[str] = Field(default_factory=list)
+    market_status: str = ''
 
 
 class ReportRequest(BaseModel):
@@ -330,16 +507,166 @@ def ingest_report(request: ReportRequest):
         if not report['report_date']:
             raise HTTPException(status_code=400, detail="Could not parse report date")
         client = get_bq_client()
-        rows_written = write_report(client, report)
+        result = write_report(client, report)
         return {
             "status": "ok",
             "report_date": report['report_date'],
             "prices_count": len(report['prices']),
             "summary_count": len(report['summary']),
-            "rows_written": rows_written,
+            "rows_written": result['chilli_prices_count'],
+            "historical_rows_written": result['historical_count'],
         }
     except HTTPException:
         raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+class ParseRequest(BaseModel):
+    raw_text: str
+
+
+class ParsedReport(BaseModel):
+    report_date: str
+    market: str = 'Guntur'
+    state: str = 'Andhra Pradesh'
+    arrivals: Dict[str, Any] = Field(default_factory=dict)
+    prices: List[PriceItem] = Field(default_factory=list)
+    summary: List[str] = Field(default_factory=list)
+    market_status: str = ''
+
+
+@app.post("/api/reports/parse")
+def parse_report_with_llm(request: ParseRequest):
+    if not OPENAI_API_KEY or not OpenAI:
+        raise HTTPException(status_code=500, detail="LLM parsing not configured")
+
+    try:
+        import os as _os
+        for _key in ['HTTP_PROXY', 'HTTPS_PROXY', 'OPENAI_PROXY', 'ALL_PROXY', 'NO_PROXY']:
+            _os.environ.pop(_key, None)
+        client = OpenAI(api_key=OPENAI_API_KEY)
+        
+        prompt = """Parse this Guntur chilli market report and return a JSON object with this exact schema:
+{
+  "report_date": "DD.MM.YYYY",
+  "market": "Guntur",
+  "state": "Andhra Pradesh",
+  "arrivals": {"ac": "40,000 bags approx", "non_ac": "..."},
+  "prices": [
+    {"category": "AC", "variety": "TEJA", "min": 18000, "max": 22000, "mid": 20000, "note": "General market"}
+  ],
+  "summary": ["Mostly medium/medium best"],
+  "market_status": "steady"
+}
+
+Rules:
+- report_date format: DD.MM.YYYY
+- market is always "Guntur", state is always "Andhra Pradesh"
+- arrivals: extract AC and NON AC bag counts
+- prices: extract min/max/mid prices in RUPEES PER QUINTAL (multiply kg prices by 100)
+- category: "AC" or "NON AC"
+- variety: normalize to standard names (TEJA, 341, ARMOUR, 334/SANNAM, BYADGI, DD, BANGARAM, ROMI, NO 5, 2043, BULLET, CLASSIC, SEED, FATKI, etc.)
+- note: extract any notes like "General market", "Deluxe Qlts not available", etc.
+- summary: extract market summary points
+- market_status: one of "steady", "weak", "up", "down"
+
+Raw text:
+""" + request.raw_text
+
+        response = client.responses.create(
+            model="gpt-4o-mini",
+            input=[
+                {"role": "system", "content": "You are a market report parser. Return only valid JSON, no markdown, no explanations."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0
+        )
+
+        content = response.output[0].content[0].text
+        # Remove markdown code blocks if present
+        if content.startswith("```json"):
+            content = content[7:]
+        if content.startswith("```"):
+            content = content[3:]
+        if content.endswith("```"):
+            content = content[:-3]
+        content = content.strip()
+
+        parsed = json.loads(content)
+        return parsed
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"LLM parse error: {str(e)}")
+
+
+@app.get("/api/prices/history")
+def get_price_history(variety: str = 'Teja', days: int = 90):
+    try:
+        client = get_bq_client()
+        query = f"""
+            SELECT date, variety, grade, min_price, max_price
+            FROM `{PROJECT_ID}.{DATASET_ID}.historical_prices`
+            WHERE variety = @variety
+              AND date >= DATE_SUB(CURRENT_DATE(), INTERVAL @days DAY)
+            ORDER BY date ASC, grade ASC
+        """
+        job_config = bigquery.QueryJobConfig(
+            query_parameters=[
+                bigquery.ScalarQueryParameter("variety", "STRING", variety),
+                bigquery.ScalarQueryParameter("days", "INT64", days),
+            ]
+        )
+        results = client.query(query, job_config=job_config).result()
+        rows = [dict(row.items()) for row in results]
+        return {"variety": variety, "days": days, "data": rows}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/prices/varieties")
+def get_varieties():
+    try:
+        client = get_bq_client()
+        query = f"""
+            SELECT DISTINCT variety, grade
+            FROM `{PROJECT_ID}.{DATASET_ID}.historical_prices`
+            ORDER BY variety, grade
+        """
+        results = client.query(query).result()
+        rows = [dict(row.items()) for row in results]
+        return {"varieties": rows}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/prices/trends")
+def get_price_trends():
+    try:
+        client = get_bq_client()
+        query = f"""
+            WITH monthly AS (
+              SELECT
+                FORMAT_DATE('%Y-%m', date) AS month,
+                variety,
+                grade,
+                AVG((min_price + max_price) / 2) AS avg_price
+              FROM `{PROJECT_ID}.{DATASET_ID}.historical_prices`
+              WHERE variety IN ('Teja', '334/Sannam', 'Byadgi', '341', 'DD', 'Armoor')
+                AND grade = 'Best'
+              GROUP BY month, variety, grade
+            )
+            SELECT month, variety, grade, avg_price
+            FROM monthly
+            ORDER BY month ASC, variety ASC
+        """
+        results = client.query(query).result()
+        rows = [dict(row.items()) for row in results]
+        return {"data": rows}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -348,15 +675,31 @@ def ingest_report(request: ReportRequest):
 def get_latest_prices():
     try:
         client = get_bq_client()
-        rows = fetch_latest_prices(client)
-        return {
-            "report_date": rows[0]['report_date'] if rows else '',
-            "market": rows[0]['market'] if rows else 'Guntur',
-            "state": rows[0]['state'] if rows else 'Andhra Pradesh',
-            "arrivals": {},
-            "prices": [],
-            "summary": [],
-            "market_status": rows[0]['market_status'] if rows else '',
-        }
+        report = fetch_latest_prices(client)
+        return report
     except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/reports/json")
+def ingest_parsed_report(report: Dict[str, Any]):
+    if not report.get('report_date', '').strip():
+        raise HTTPException(status_code=400, detail="report_date is required")
+
+    try:
+        client = get_bq_client()
+        result = write_report(client, report)
+        return {
+            "status": "ok",
+            "report_date": report['report_date'],
+            "prices_count": len(report.get('prices', [])),
+            "summary_count": len(report.get('summary', [])),
+            "rows_written": result['chilli_prices_count'],
+            "historical_rows_written": result['historical_count'],
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))

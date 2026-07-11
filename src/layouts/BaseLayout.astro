@@ -61,6 +61,7 @@ const API_URL = import.meta.env.PUBLIC_API_URL || '';
           <li><a href="/about.html" class={"nav-link" + (Astro.url.pathname === '/about.html' ? ' active' : '')}>About Us</a></li>
           <li><a href="/contact.html" class={"nav-link" + (Astro.url.pathname === '/contact.html' ? ' active' : '')}>Contact Us</a></li>
           <li><a href="/blog.html" class={"nav-link" + (Astro.url.pathname === '/blog.html' ? ' active' : '')}>Our Blog</a></li>
+          <li><a href="/prices.html" class={"nav-link" + (Astro.url.pathname === '/prices.html' ? ' active' : '')}>Price History</a></li>
         </ul>
       </nav>
       <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation">
@@ -89,16 +90,17 @@ const API_URL = import.meta.env.PUBLIC_API_URL || '';
   <!-- Google Translate -->
   <div id="google_translate_element" class="translate"></div>
 
+  <span id="api-url" style="display: none;">{API_URL}</span>
+  <script is:inline>
+    window.API_URL = document.getElementById('api-url').textContent;
+  </script>
+
   <!-- Main Content -->
   <main id="main-content" class="main-content">
     <slot />
   </main>
 
   <script src="/assets/js/index.js" is:inline></script>
-  <span id="api-url" style="display: none;">{API_URL}</span>
-  <script is:inline>
-    window.API_URL = document.getElementById('api-url').textContent;
-  </script>
   <script is:inline>
     document.getElementById('mobileToggle').addEventListener('click', function () {
       document.getElementById('mainNav').classList.toggle('nav-open');
