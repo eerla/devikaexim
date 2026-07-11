@@ -78,7 +78,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 });
                 select.appendChild(optgroup);
               });
-              if (firstVariety) select.value = firstVariety;
+              if (firstVariety) {
+                select.value = firstVariety;
+                drawChart();
+              }
             } else {
               select.innerHTML = '<option value="">No varieties available</option>';
             }
@@ -90,6 +93,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       }
 
       document.getElementById('updateChart').addEventListener('click', function() {
+        drawChart();
+      });
+
+      function drawChart() {
         var select = document.getElementById('varietySelect');
         var daysSelect = document.getElementById('daysSelect');
         var errorBox = document.getElementById('errorBox');
@@ -154,7 +161,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             chartDiv.innerHTML = '<p style="text-align:center; padding: 40px; color: #991b1b;">Failed to load chart data</p>';
             console.error('Failed to fetch history:', err);
           });
-      });
+      }
     })();
   </script>
 
