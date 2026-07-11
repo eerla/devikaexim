@@ -1,15 +1,75 @@
 const blogs = [
   {
       title: "How to store dry red chillies for longer shelf life?",
-      description: "Red chillies are essential in Indian cuisine, providing color, flavor, and taste; however, improper storage can lead to spoilage. To extend the shelf life of dry red chillies, it’s crucial to store them in airtight containers in a cool, dark place and to use them within a year. Common causes of spoilage include dehydration, light, oxygen, and temperature fluctuations. Tips for repacking include using vacuum-sealed bags, drying them with a food dehydrator, or storing them in sterilized glass jars. Avoid plastic bags and ensure chillies are completely dry before storage to prevent oxidation. Regularly inspect stored chillies for damage and label containers with packing dates. By following these guidelines, you can effectively prolong the freshness of your dry red chillies, making them last longer for your culinary needs."
+      icon: "🧊",
+      tags: ["Storage", "Household"],
+      description: "Red chillies are essential in Indian cuisine, providing color, flavor, and taste; however, improper storage can lead to spoilage. To extend the shelf life of dry red chillies, it's crucial to store them in airtight containers in a cool, dark place and to use them within a year. Common causes of spoilage include dehydration, light, oxygen, and temperature fluctuations. Tips for repacking include using vacuum-sealed bags, drying them with a food dehydrator, or storing them in sterilized glass jars. Avoid plastic bags and ensure chillies are completely dry before storage to prevent oxidation. Regularly inspect stored chillies for damage and label containers with packing dates. By following these guidelines, you can effectively prolong the freshness of your dry red chillies, making them last longer for your culinary needs."
   },
   {
       title: "5 Tips for Drying Red Chillies at Home",
+      icon: "☀️",
+      tags: ["Storage", "Household"],
       description: "Drying chillies at home is easy with these 5 tips: air dry, use a dehydrator, sun dry, oven dry, and microwave dry. Each method ensures long-lasting flavor and quality."
   },
   {
     title: "Did you know this about red dry chillies?",
-    description: "Here are five must-know facts about red dried chillies: <strong>1. **High in Vitamin C**:</strong> Red dried chillies are packed with Vitamin C, even more than citrus fruits like oranges. They help boost the immune system and promote healthy skin. <strong>2. **Capsaicin Power**:</strong> The heat of red chillies comes from a compound called capsaicin. This compound not only adds spice but also has anti-inflammatory and pain-relief properties, making it popular in creams for sore muscles.   <strong>3. **Natural Preservative**:</strong> Due to their antimicrobial properties, dried red chillies act as a natural preservative. They prevent bacterial growth in foods, which is why they’re commonly used in pickles and spice blends. <strong>4. **Different Varieties, Different Heat Levels**:</strong> Not all red chillies are equally hot. Varieties like the Teja S17 are much hotter than others like the Kashmiri chilli, which is milder and used more for color than heat. <strong>5. **Boosts Metabolism**:</strong> Capsaicin in red chillies is known to increase metabolic rate, which can aid in fat burning and weight loss. It’s why spicy food often leaves you sweating – your body is burning more energy!"
+    icon: "🌶️",
+    tags: ["Health", "Facts"],
+    description: "Here are five must-know facts about red dried chillies: <strong>1. **High in Vitamin C**:</strong> Red dried chillies are packed with Vitamin C, even more than citrus fruits like oranges. They help boost the immune system and promote healthy skin. <strong>2. **Capsaicin Power**:</strong> The heat of red chillies comes from a compound called capsaicin. This compound not only adds spice but also has anti-inflammatory and pain-relief properties, making it popular in creams for sore muscles.   <strong>3. **Natural Preservative**:</strong> Due to their antimicrobial properties, dried red chillies act as a natural preservative. They prevent bacterial growth in foods, which is why they're commonly used in pickles and spice blends. <strong>4. **Different Varieties, Different Heat Levels**:</strong> Not all red chillies are equally hot. Varieties like the Teja S17 are much hotter than others like the Kashmiri chilli, which is milder and used more for color than heat. <strong>5. **Boosts Metabolism**:</strong> Capsaicin in red chillies is known to increase metabolic rate, which can aid in fat burning and weight loss. It's why spicy food often leaves you sweating – your body is burning more energy!"
+  },
+  {
+    title: "How to Choose Quality Red Chillies for Export",
+    icon: "📦",
+    tags: ["Export", "Business"],
+    description: "Export-grade red chillies require strict quality checks. Look for uniform color, low moisture content (under 12%), and no fungal damage. The most popular export varieties from India include Teja S17, 334 Sannam, and Byadgi. Always check for ASTA color values and request a lab test report before placing bulk orders. At Devika Exim, we ensure every batch meets international quality standards with proper fumigation and packaging."
+  },
+  {
+    title: "Understanding Guntur Chilli Market Prices",
+    icon: "📈",
+    tags: ["Market", "Business"],
+    description: "The Guntur chilli market is one of the largest in Asia, and prices fluctuate daily based on arrivals, demand, and crop season. Prices are quoted per quintal (100 kg) and vary by variety and grade. Best quality grades command premium prices, while medium and deluxe grades are priced lower. Factors like rainfall, crop yield, and export orders directly impact market rates. Use our live market report to stay updated before making purchase decisions."
+  },
+  {
+    title: "Health Benefits of Capsaicin in Red Chillies",
+    icon: "❤️",
+    tags: ["Health", "Facts"],
+    description: "Capsaicin, the active compound in red chillies, offers numerous health benefits. It helps relieve pain when applied topically, supports weight management by boosting metabolism, and may reduce cancer cell growth in lab studies. Regular dietary intake is linked to better heart health and improved digestion. However, moderation is key — excessive consumption can cause stomach irritation. Consult a nutritionist if you plan to use chillies for therapeutic purposes."
+  },
+  {
+    title: "Packaging and Shipping Tips for Bulk Chilli Orders",
+    icon: "🚚",
+    tags: ["Export", "Business"],
+    description: "Bulk chilli orders require careful packaging to prevent moisture absorption and contamination. Use food-grade PP bags or jute bags with inner liners for export shipments. Include silica gel packets to control humidity during transit. Label each bag with variety, grade, and packing date. For international shipping, ensure fumigation certificates and phytosanitary certificates are included. Plan shipping during cooler months to avoid heat damage in containers."
+  },
+  {
+    title: "How to Make Homemade Chilli Powder at Home",
+    icon: "🍳",
+    tags: ["Recipes", "Household"],
+    description: "Making chilli powder at home is simple and preserves more flavor than store-bought versions. Start with clean, dry red chillies — remove stems and seeds for milder powder, or keep seeds for extra heat. Roast the chillies on low heat for 2-3 minutes until fragrant, then let them cool completely before grinding. Use a mortar and pestle or spice grinder for fine powder. Store in an airtight glass jar away from sunlight. Homemade powder stays fresh for 6-8 months and gives your curries an authentic taste."
+  },
+  {
+    title: "Best Indian Recipes Using Dry Red Chillies",
+    icon: "🍛",
+    tags: ["Recipes", "Household"],
+    description: "Dry red chillies are the backbone of Indian cooking. Try these popular recipes: <strong>1. Chilli Garlic Prawns:</strong> Soak chillies overnight, blend into a paste, and toss with prawns, garlic, and lemon. <strong>2. Guntur Chicken Curry:</strong> Use 3-4 dry chillies soaked and blended with coconut for a spicy, flavorful curry. <strong>3. Chilli Pickle (Mirchi Achar):</strong> Slit chillies, stuff with mustard oil and spices, and sun-dry for 5-7 days. <strong>4. Tomato Chilli Chutney:</strong> Roast tomatoes and chillies together, blend with tamarind and jaggery for a tangy dip. <strong>5. Chilli Rice:</strong> Fry cashews and chillies in ghee, toss with steamed rice and cilantro for a quick meal."
+  },
+  {
+    title: "5 Common Mistakes to Avoid When Buying Dry Red Chillies",
+    icon: "⚠️",
+    tags: ["Buying Tips", "Household"],
+    description: "Avoid these mistakes when purchasing dry red chillies: <strong>1. Ignoring moisture content:</strong> Wet chillies mold quickly. Always check for crispness. <strong>2. Buying by color alone:</strong> Bright red doesn't always mean fresh — some sellers add artificial color. Smell for natural pungency instead. <strong>3. Overlooking storage:</strong> Don't buy from open bins exposed to air. Request factory-packed bags with manufacturing dates. <strong>4. Skipping variety check:</strong> Teja, 334 Sannam, and Byadgi serve different purposes. Buy the right variety for your need. <strong>5. Ignoring bulk pricing:</strong> Small packs are expensive per kg. For regular use, buy 5kg or 25kg bulk bags from trusted suppliers like Devika Exim."
+  },
+  {
+    title: "How to Soak and Prep Dry Red Chillies for Cooking",
+    icon: "💧",
+    tags: ["Recipes", "Household"],
+    description: "Soaking dry chillies softens them and removes excess heat. Cut and deseed chillies, then soak in warm water for 20-30 minutes. For milder flavor, soak in milk instead of water — it reduces heat and adds creaminess. After soaking, drain and blend into a smooth paste for curries, chutneys, or marinades. Soaked chillies work perfectly for dishes like mirchi ka salan, chilli chicken, and stuffed chillies. Pro tip: Save the soaking water — it adds depth to gravies and rasams."
+  },
+  {
+    title: "Seasonal Guide: When to Buy and Stock Up on Chillies",
+    icon: "📅",
+    tags: ["Market", "Buying Tips"],
+    description: "Dry red chilli prices vary by season in India. The main harvest season is December to March, when arrivals peak at Guntur market and prices drop. April to June is the lean season with limited stock and higher prices. July to September sees new crop arrivals from different regions, stabilizing prices. For bulk buyers, the best time to stock up is January-February. Monitor market reports on our site for daily price updates and plan purchases accordingly."
   }
 ];
 
@@ -39,52 +99,32 @@ function toggleImage() {
 }
 
 // blogs
-// Function to generate the blog sections dynamically
 function generateBlogs() {
-  const blogContainer = document.getElementById('blog-sections'); // Parent container to hold all blogs
-  blogs.forEach((blog, index) => {
-      // Create a new div for each blog
-      const blogHTML = `
-          <div class="blog-section" data-blog-id="${index + 1}">
-              <div class="banner-container" onclick="toggleBlogPost(this)">
-                  <div class="banner-content">
-                      <h2>${blog.title}</h2>
-                      <span class="arrow-up"></span>
-                  </div>
-              </div>
-              <div class="b-container" style="display: none;">
-                  <p>${blog.description}</p>
-              </div>
-          </div>
-      `;
-      
-    if (blogContainer) {
-      // Append the HTML to the container
-      blogContainer.innerHTML += blogHTML;
-    }
-  });
+  const blogContainer = document.getElementById('blog-sections');
+  if (!blogContainer) return;
+
+  blogContainer.innerHTML = blogs.map((blog, index) => {
+    const tagsHtml = (blog.tags || []).map(tag => {
+      const isHighlight = tag === 'Household' || tag === 'Recipes';
+      return `<span class="blog-tag ${isHighlight ? 'highlight' : ''}">${tag}</span>`;
+    }).join('');
+
+    return `
+      <div class="blog-card" data-blog-id="${index + 1}">
+        <div class="blog-card-header">
+          <div class="blog-icon">${blog.icon || '🌶️'}</div>
+          <h2>${blog.title}</h2>
+        </div>
+        <div class="blog-card-body">
+          <p>${blog.description}</p>
+          <div class="blog-tags">${tagsHtml}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
 }
 
-// Call the function to generate the blogs on page load
 document.addEventListener('DOMContentLoaded', generateBlogs);
-
-
-function toggleBlogPost(element) {
-  // Find the blog container (b-container) related to the clicked banner
-  const blogContainer = element.nextElementSibling;
-
-  // Toggle the display of the blog post
-  if (blogContainer.style.display === "none") {
-      blogContainer.style.display = "block";
-      element.querySelector('.arrow-up').classList.add('arrow-down');
-      element.querySelector('.arrow-up').classList.remove('arrow-up')
-  } else {
-      blogContainer.style.display = "none";
-      element.querySelector('.arrow-down').classList.add('arrow-up')
-      element.querySelector('.arrow-down').classList.remove('arrow-down');
-  }
-}
-
 
 // google sheets - price table
 // const API_KEY = 'AIzaSyALCAlXw5hTzOLbsZDc2i31vJb5hTZ5Pq8';
