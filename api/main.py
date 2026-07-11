@@ -526,6 +526,16 @@ class ParseRequest(BaseModel):
     raw_text: str
 
 
+class ParsedReport(BaseModel):
+    report_date: str
+    market: str = 'Guntur'
+    state: str = 'Andhra Pradesh'
+    arrivals: Dict[str, Any] = Field(default_factory=dict)
+    prices: List[PriceItem] = Field(default_factory=list)
+    summary: List[str] = Field(default_factory=list)
+    market_status: str = ''
+
+
 @app.post("/api/reports/parse")
 def parse_report_with_llm(request: ParseRequest):
     if not OPENAI_API_KEY or not OpenAI:
@@ -665,17 +675,31 @@ def get_price_trends():
 def get_latest_prices():
     try:
         client = get_bq_client()
-        report_dict = report.dict()
-        result = write_report(client, report_dict)
+        report = fetch_latest_prices(client)
+        return report
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/reports/json")
+def ingest_parsed_report(report: Dict[str, Any]):
+    if not report.get('report_date', '').strip():
+        raise HTTPException(status_code=400, detail="report_date is required")
+
+    try:
+        client = get_bq_client()
+        result = write_report(client, report)
         return {
             "status": "ok",
-            "report_date": report.report_date,
-            "prices_count": len(report.prices),
-            "summary_count": len(report.summary),
+            "report_date": report['report_date'],
+            "prices_count": len(report.get('prices', [])),
+            "summary_count": len(report.get('summary', [])),
             "rows_written": result['chilli_prices_count'],
             "historical_rows_written": result['historical_count'],
         }
     except HTTPException:
         raise
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
