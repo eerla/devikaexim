@@ -90,7 +90,7 @@ const API_URL = import.meta.env.PUBLIC_API_URL || '';
   <!-- Google Translate -->
   <div id="google_translate_element" class="translate"></div>
 
-  <span id="api-url" style="display: none;">{API_URL}</span>
+  <span id="api-url" style="display: none;">{import.meta.env.PUBLIC_API_URL || 'https://devikaexim-market-api-980117553890.asia-south1.run.app'}</span>
   <script is:inline>
     window.API_URL = document.getElementById('api-url').textContent;
   </script>
