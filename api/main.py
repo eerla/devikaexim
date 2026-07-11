@@ -8,6 +8,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from typing import Optional, List, Dict, Any
+from starlette.middleware.base import BaseHTTPMiddleware
 
 from google.cloud import bigquery
 
@@ -444,6 +445,17 @@ def fetch_latest_prices(client: bigquery.Client) -> dict:
 
 # ─── FastAPI app ──────────────────────────────────────────────────────────────
 
+from starlette.middleware.base import BaseHTTPMiddleware
+
+class ExplicitCORSMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request, call_next):
+        response = await call_next(request)
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        return response
+
+
 app = FastAPI(title="Devika Exim Market API")
 
 app.add_middleware(
@@ -453,6 +465,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.add_middleware(ExplicitCORSMiddleware)
 
 
 class PriceItem(BaseModel):
