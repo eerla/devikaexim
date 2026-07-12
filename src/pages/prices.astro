@@ -48,6 +48,29 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         return;
       }
 
+      function getCached(key, ttl) {
+        try {
+          var item = localStorage.getItem(key);
+          if (!item) return null;
+          var parsed = JSON.parse(item);
+          if (Date.now() - parsed.ts > ttl) {
+            localStorage.removeItem(key);
+            return null;
+          }
+          return parsed.val;
+        } catch (e) {
+          return null;
+        }
+      }
+
+      function setCached(key, val) {
+        try {
+          localStorage.setItem(key, JSON.stringify({ ts: Date.now(), val: val }));
+        } catch (e) {
+          // localStorage full or unavailable
+        }
+      }
+
       google.charts.load('current', {'packages':['corechart']});
       google.charts.setOnLoadCallback(function() {
         loadVarieties();
@@ -116,51 +139,66 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         var grade = parts[1] || '';
         var days = parseInt(daysSelect.value, 10);
 
+        var cacheKey = 'devikaexim:history:' + variety + ':' + days;
+        var cached = getCached(cacheKey, 600000); // 10 minutes
+        if (cached) {
+          renderChart(cached, variety, grade);
+          return;
+        }
+
         fetch(API_URL + '/api/prices/history?variety=' + encodeURIComponent(variety) + '&days=' + days)
           .then(function(r) { return r.json(); })
           .then(function(data) {
-            if (!data.data || !data.data.length) {
-              chartDiv.innerHTML = '<p style="text-align:center; padding: 40px; color: #6b7280;">No data available for this selection</p>';
-              return;
-            }
-
-            var filtered = data.data;
-            if (grade) {
-              filtered = data.data.filter(function(d) { return d.grade === grade; });
-            }
-
-            if (!filtered.length) {
-              chartDiv.innerHTML = '<p style="text-align:center; padding: 40px; color: #6b7280;">No data for ' + variety + ' - ' + grade + '</p>';
-              return;
-            }
-
-            var chartData = new google.visualization.DataTable();
-            chartData.addColumn('string', 'Date');
-            chartData.addColumn('number', variety + (grade ? ' (' + grade + ')' : ''));
-
-            filtered.forEach(function(d) {
-              chartData.addRow([d.date, d.max_price]);
-            });
-
-            var options = {
-              title: variety + (grade ? ' - ' + grade : '') + ' Price Trend',
-              curveType: 'function',
-              legend: { position: 'bottom' },
-              hAxis: { title: 'Date' },
-              vAxis: { title: 'Price (Rs)' },
-              pointSize: 3,
-              lineWidth: 2,
-              colors: ['#D21818'],
-              chartArea: { left: 60, top: 40, right: 30, bottom: 80 }
-            };
-
-            var chart = new google.visualization.LineChart(chartDiv);
-            chart.draw(chartData, options);
+            setCached(cacheKey, data);
+            renderChart(data, variety, grade);
           })
           .catch(function(err) {
             chartDiv.innerHTML = '<p style="text-align:center; padding: 40px; color: #991b1b;">Failed to load chart data</p>';
             console.error('Failed to fetch history:', err);
           });
+      }
+
+      function renderChart(data, variety, grade) {
+        var chartDiv = document.getElementById('chart_div');
+        var errorBox = document.getElementById('errorBox');
+
+        if (!data.data || !data.data.length) {
+          chartDiv.innerHTML = '<p style="text-align:center; padding: 40px; color: #6b7280;">No data available for this selection</p>';
+          return;
+        }
+
+        var filtered = data.data;
+        if (grade) {
+          filtered = data.data.filter(function(d) { return d.grade === grade; });
+        }
+
+        if (!filtered.length) {
+          chartDiv.innerHTML = '<p style="text-align:center; padding: 40px; color: #6b7280;">No data for ' + variety + ' - ' + grade + '</p>';
+          return;
+        }
+
+        var chartData = new google.visualization.DataTable();
+        chartData.addColumn('string', 'Date');
+        chartData.addColumn('number', variety + (grade ? ' (' + grade + ')' : ''));
+
+        filtered.forEach(function(d) {
+          chartData.addRow([d.date, d.max_price]);
+        });
+
+        var options = {
+          title: variety + (grade ? ' - ' + grade : '') + ' Price Trend',
+          curveType: 'function',
+          legend: { position: 'bottom' },
+          hAxis: { title: 'Date' },
+          vAxis: { title: 'Price (Rs)' },
+          pointSize: 3,
+          lineWidth: 2,
+          colors: ['#D21818'],
+          chartArea: { left: 60, top: 40, right: 30, bottom: 80 }
+        };
+
+        var chart = new google.visualization.LineChart(chartDiv);
+        chart.draw(chartData, options);
       }
     })();
   </script>
