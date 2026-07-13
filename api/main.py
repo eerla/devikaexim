@@ -1,6 +1,7 @@
 import os
 import re
 import json
+import time
 from datetime import datetime
 from typing import Optional, List, Dict, Any
 
@@ -23,6 +24,27 @@ PROJECT_ID = os.getenv("GCP_PROJECT_ID", "devikaexim")
 DATASET_ID = os.getenv("BQ_DATASET", "market")
 TABLE_ID = os.getenv("BQ_TABLE", "chilli_prices")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
+
+# ─── Simple in-memory cache ──────────────────────────────────────────────────
+
+_cache: Dict[str, Dict[str, Any]] = {}
+
+def cache_get(key: str, ttl_seconds: int) -> Any:
+    entry = _cache.get(key)
+    if not entry:
+        return None
+    if time.time() - entry['ts'] > ttl_seconds:
+        del _cache[key]
+        return None
+    return entry['val']
+
+def cache_set(key: str, val: Any) -> None:
+    _cache[key] = {'val': val, 'ts': time.time()}
+
+def cache_clear_prefix(prefix: str) -> None:
+    for k in list(_cache.keys()):
+        if k.startswith(prefix):
+            del _cache[k]
 
 # ─── BigQuery client ──────────────────────────────────────────────────────────
 
@@ -606,6 +628,10 @@ Raw text:
 
 @app.get("/api/prices/history")
 def get_price_history(variety: str = 'Teja', days: int = 90):
+    cache_key = f"history:{variety}:{days}"
+    cached = cache_get(cache_key, 600)
+    if cached is not None:
+        return cached
     try:
         client = get_bq_client()
         query = f"""
@@ -623,13 +649,19 @@ def get_price_history(variety: str = 'Teja', days: int = 90):
         )
         results = client.query(query, job_config=job_config).result()
         rows = [dict(row.items()) for row in results]
-        return {"variety": variety, "days": days, "data": rows}
+        result = {"variety": variety, "days": days, "data": rows}
+        cache_set(cache_key, result)
+        return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.get("/api/prices/varieties")
 def get_varieties():
+    cache_key = "varieties:all"
+    cached = cache_get(cache_key, 86400)
+    if cached is not None:
+        return cached
     try:
         client = get_bq_client()
         query = f"""
@@ -639,13 +671,19 @@ def get_varieties():
         """
         results = client.query(query).result()
         rows = [dict(row.items()) for row in results]
-        return {"varieties": rows}
+        result = {"varieties": rows}
+        cache_set(cache_key, result)
+        return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.get("/api/prices/trends")
 def get_price_trends():
+    cache_key = "trends:all"
+    cached = cache_get(cache_key, 3600)
+    if cached is not None:
+        return cached
     try:
         client = get_bq_client()
         query = f"""
@@ -666,16 +704,23 @@ def get_price_trends():
         """
         results = client.query(query).result()
         rows = [dict(row.items()) for row in results]
-        return {"data": rows}
+        result = {"data": rows}
+        cache_set(cache_key, result)
+        return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.get("/api/prices/latest")
 def get_latest_prices():
+    cache_key = "latest:prices"
+    cached = cache_get(cache_key, 300)
+    if cached is not None:
+        return cached
     try:
         client = get_bq_client()
         report = fetch_latest_prices(client)
+        cache_set(cache_key, report)
         return report
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -689,6 +734,10 @@ def ingest_parsed_report(report: Dict[str, Any]):
     try:
         client = get_bq_client()
         result = write_report(client, report)
+        cache_clear_prefix("latest:")
+        cache_clear_prefix("trends:")
+        cache_clear_prefix("history:")
+        cache_clear_prefix("varieties:")
         return {
             "status": "ok",
             "report_date": report['report_date'],

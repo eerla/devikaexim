@@ -65,46 +65,80 @@ const API_URL = import.meta.env.PUBLIC_API_URL || '';
       return;
     }
 
+    function getCached(key, ttl) {
+      try {
+        var item = localStorage.getItem(key);
+        if (!item) return null;
+        var parsed = JSON.parse(item);
+        if (Date.now() - parsed.ts > ttl) {
+          localStorage.removeItem(key);
+          return null;
+        }
+        return parsed.val;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function setCached(key, val) {
+      try {
+        localStorage.setItem(key, JSON.stringify({ ts: Date.now(), val: val }));
+      } catch (e) {
+        // localStorage full or unavailable
+      }
+    }
+
+    var cacheKey = 'devikaexim:latest:prices';
+    var cached = getCached(cacheKey, 300000); // 5 minutes
+    if (cached) {
+      renderPrices(cached);
+    }
+
     fetch(API_URL + '/api/prices/latest')
       .then(function(r) { return r.json(); })
       .then(function(data) {
-        document.getElementById('reportDate').textContent = data.report_date || '—';
-        document.getElementById('marketLocation').textContent = (data.market || 'Guntur') + ', ' + (data.state || 'Andhra Pradesh');
-        document.getElementById('nonAcArrivals').textContent = (data.arrivals && data.arrivals.non_ac) || '—';
-        document.getElementById('acArrivals').textContent = (data.arrivals && data.arrivals.ac) || '—';
-
-        var tbody = document.getElementById('pricesTableBody');
-        tbody.innerHTML = '';
-        if (data.prices && data.prices.length) {
-          data.prices.forEach(function(p) {
-            var tr = document.createElement('tr');
-            var categoryClass = (p.category || '').toLowerCase().replace(/[^a-z]/g, '-');
-            tr.innerHTML = '<td><span class="badge ' + categoryClass + '">' + (p.category || '') + '</span></td>' +
-              '<td class="variety-name">' + (p.variety || '') + '</td>' +
-              '<td class="price">₹' + Number(p.min_price || p.min || 0).toLocaleString() + '</td>' +
-              '<td class="price">₹' + Number(p.max_price || p.max || 0).toLocaleString() + '</td>' +
-              '<td class="note">' + (p.note || '—') + '</td>';
-            tbody.appendChild(tr);
-          });
-        } else {
-          tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 24px; color: #6b7280;">No prices available</td></tr>';
-        }
-
-        var summaryList = document.getElementById('marketSummaryList');
-        summaryList.innerHTML = '';
-        if (data.summary && data.summary.length) {
-          data.summary.forEach(function(item) {
-            var li = document.createElement('li');
-            li.textContent = item;
-            summaryList.appendChild(li);
-          });
-        } else {
-          summaryList.innerHTML = '<li>No market summary available</li>';
-        }
+        setCached(cacheKey, data);
+        renderPrices(data);
       })
       .catch(function(err) {
         document.getElementById('pricesTableBody').innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 24px; color: #991b1b;">Failed to load prices</td></tr>';
         console.error('Failed to fetch prices:', err);
       });
+
+    function renderPrices(data) {
+      document.getElementById('reportDate').textContent = data.report_date || '—';
+      document.getElementById('marketLocation').textContent = (data.market || 'Guntur') + ', ' + (data.state || 'Andhra Pradesh');
+      document.getElementById('nonAcArrivals').textContent = (data.arrivals && data.arrivals.non_ac) || '—';
+      document.getElementById('acArrivals').textContent = (data.arrivals && data.arrivals.ac) || '—';
+
+      var tbody = document.getElementById('pricesTableBody');
+      tbody.innerHTML = '';
+      if (data.prices && data.prices.length) {
+        data.prices.forEach(function(p) {
+          var tr = document.createElement('tr');
+          var categoryClass = (p.category || '').toLowerCase().replace(/[^a-z]/g, '-');
+          tr.innerHTML = '<td><span class="badge ' + categoryClass + '">' + (p.category || '') + '</span></td>' +
+            '<td class="variety-name">' + (p.variety || '') + '</td>' +
+            '<td class="price">₹' + Number(p.min_price || p.min || 0).toLocaleString() + '</td>' +
+            '<td class="price">₹' + Number(p.max_price || p.max || 0).toLocaleString() + '</td>' +
+            '<td class="note">' + (p.note || '—') + '</td>';
+          tbody.appendChild(tr);
+        });
+      } else {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 24px; color: #6b7280;">No prices available</td></tr>';
+      }
+
+      var summaryList = document.getElementById('marketSummaryList');
+      summaryList.innerHTML = '';
+      if (data.summary && data.summary.length) {
+        data.summary.forEach(function(item) {
+          var li = document.createElement('li');
+          li.textContent = item;
+          summaryList.appendChild(li);
+        });
+      } else {
+        summaryList.innerHTML = '<li>No market summary available</li>';
+      }
+    }
   })();
 </script>

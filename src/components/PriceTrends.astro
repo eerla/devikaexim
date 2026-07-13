@@ -14,88 +14,148 @@ const API_URL = import.meta.env.PUBLIC_API_URL || '';
   </div>
 </section>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"
+        onerror="this.onerror=null; this.src='https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js';"
+></script>
 <script is:inline>
   (function() {
     var API_URL = window.API_URL || '';
     if (!API_URL) return;
 
+    function getCached(key, ttl) {
+      try {
+        var item = localStorage.getItem(key);
+        if (!item) return null;
+        var parsed = JSON.parse(item);
+        if (Date.now() - parsed.ts > ttl) {
+          localStorage.removeItem(key);
+          return null;
+        }
+        return parsed.val;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function setCached(key, val) {
+      try {
+        localStorage.setItem(key, JSON.stringify({ ts: Date.now(), val: val }));
+      } catch (e) {
+        // localStorage full or unavailable
+      }
+    }
+
+    function waitForChart(callback, maxWait) {
+      maxWait = maxWait || 5000;
+      var start = Date.now();
+      function check() {
+        if (typeof Chart !== 'undefined') {
+          callback();
+        } else if (Date.now() - start < maxWait) {
+          setTimeout(check, 100);
+        } else {
+          console.error('Chart.js failed to load after waiting');
+        }
+      }
+      check();
+    }
+
+    var cacheKey = 'devikaexim:trends:all';
+    var cached = getCached(cacheKey, 3600000); // 1 hour
+    if (cached) {
+      waitForChart(function() { renderChart(cached); });
+    }
+
     fetch(API_URL + '/api/prices/trends')
       .then(function(r) { return r.json(); })
       .then(function(resp) {
-        var raw = resp.data || [];
-        if (!raw.length) return;
-
-        var months = raw.map(function(r) { return r.month; });
-        var uniqueMonths = Array.from(new Set(months)).sort();
-
-        var varieties = ['Teja', '334/Sannam', 'Byadgi', '341', 'DD', 'Armoor'];
-        var colors = ['#2a78d6', '#1baf7a', '#eda100', '#4a3aa7', '#e34948', '#eb6834'];
-        var dashes = [[], [6,3], [2,2], [8,3,2,3], [4,4], [1,3]];
-
-        var legendEl = document.getElementById('chartLegend');
-        varieties.forEach(function(v, i) {
-          var span = document.createElement('span');
-          span.style.cssText = 'display:flex;align-items:center;gap:6px;margin-right:16px;font-size:13px;color:#555;';
-          span.innerHTML = '<span style="width:12px;height:3px;background:' + colors[i] + ';display:inline-block;border-radius:1px;"></span>' + v + ' (Best)';
-          legendEl.appendChild(span);
-        });
-
-        var datasets = varieties.map(function(v, i) {
-          return {
-            label: v,
-            data: uniqueMonths.map(function(m) {
-              var row = raw.find(function(r) { return r.month === m && r.variety === v; });
-              return row ? row.avg_price : null;
-            }),
-            borderColor: colors[i],
-            backgroundColor: colors[i],
-            borderDash: dashes[i],
-            borderWidth: 2,
-            pointRadius: 0,
-            pointHoverRadius: 4,
-            tension: 0.15,
-            spanGaps: true
-          };
-        });
-
-        new Chart(document.getElementById('priceChart'), {
-          type: 'line',
-          data: { labels: uniqueMonths, datasets: datasets },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            interaction: { mode: 'index', intersect: false },
-            plugins: {
-              legend: { display: false },
-              tooltip: {
-                callbacks: {
-                  label: function(ctx) {
-                    return ctx.dataset.label + ': ' + (ctx.parsed.y !== null ? '\u20b9' + Math.round(ctx.parsed.y).toLocaleString('en-IN') : 'n/a');
-                  }
-                }
-              }
-            },
-            scales: {
-              x: {
-                ticks: { color: '#898781', maxRotation: 0, autoSkip: true, maxTicksLimit: 12 },
-                grid: { display: false }
-              },
-              y: {
-                title: { display: true, text: '₹ per quintal', color: '#898781' },
-                ticks: {
-                  color: '#898781',
-                  callback: function(v) { return '\u20b9' + (v/1000) + 'k'; }
-                },
-                grid: { color: '#e1e0d9' }
-              }
-            }
-          }
-        });
+        setCached(cacheKey, resp);
+        waitForChart(function() { renderChart(resp); });
       })
       .catch(function(err) {
         console.error('Failed to load trends:', err);
       });
+
+    var currentChart = null;
+
+    function renderChart(resp) {
+      if (window.__devikaeximTrendsRendered) return;
+      window.__devikaeximTrendsRendered = true;
+
+      var raw = resp.data || [];
+      if (!raw.length) return;
+
+      var months = raw.map(function(r) { return r.month; });
+      var uniqueMonths = Array.from(new Set(months)).sort();
+
+      var varieties = ['Teja', '334/Sannam', 'Byadgi', '341', 'DD', 'Armoor'];
+      var colors = ['#2a78d6', '#1baf7a', '#eda100', '#4a3aa7', '#e34948', '#eb6834'];
+      var dashes = [[], [6,3], [2,2], [8,3,2,3], [4,4], [1,3]];
+
+      var legendEl = document.getElementById('chartLegend');
+      varieties.forEach(function(v, i) {
+        var span = document.createElement('span');
+        span.style.cssText = 'display:flex;align-items:center;gap:6px;margin-right:16px;font-size:13px;color:#555;';
+        span.innerHTML = '<span style="width:12px;height:3px;background:' + colors[i] + ';display:inline-block;border-radius:1px;"></span>' + v + ' (Best)';
+        legendEl.appendChild(span);
+      });
+
+      var datasets = varieties.map(function(v, i) {
+        return {
+          label: v,
+          data: uniqueMonths.map(function(m) {
+            var row = raw.find(function(r) { return r.month === m && r.variety === v; });
+            return row ? row.avg_price : null;
+          }),
+          borderColor: colors[i],
+          backgroundColor: colors[i],
+          borderDash: dashes[i],
+          borderWidth: 2,
+          pointRadius: 0,
+          pointHoverRadius: 4,
+          tension: 0.15,
+          spanGaps: true
+        };
+      });
+
+      var ctx = document.getElementById('priceChart');
+      if (currentChart) {
+        currentChart.destroy();
+      }
+      currentChart = new Chart(ctx, {
+        type: 'line',
+        data: { labels: uniqueMonths, datasets: datasets },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function(ctx) {
+                  return ctx.dataset.label + ': ' + (ctx.parsed.y !== null ? '\u20b9' + Math.round(ctx.parsed.y).toLocaleString('en-IN') : 'n/a');
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              ticks: { color: '#898781', maxRotation: 0, autoSkip: true, maxTicksLimit: 12 },
+              grid: { display: false }
+            },
+            y: {
+              title: { display: true, text: '₹ per quintal', color: '#898781' },
+              ticks: {
+                color: '#898781',
+                callback: function(v) { return '\u20b9' + (v/1000) + 'k'; }
+              },
+              grid: { color: '#e1e0d9' }
+            }
+          }
+        }
+      });
+    }
   })();
 </script>
 
