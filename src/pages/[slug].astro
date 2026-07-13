@@ -1,0 +1,419 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+interface Product {
+  title: string;
+  description: string;
+  features: Array<{feature: string; value: string}>;
+}
+
+interface Props {
+  variety: string;
+  title: string;
+  description: string;
+  canonical: string;
+  features?: Product['features'];
+}
+
+export function getStaticPaths() {
+  const products: Product[] = [
+  {
+    title: "Teja S17 Dried Red Chilli",
+    description: "Teja chilli, one of the hottest varieties available, is primarily grown in southern India, near the renowned Guntur Mirchi Market. Known globally as S17 Teja chilli, it is highly sought after by international buyers. Our Teja chillies are offered in stemless, with stem, and powdered forms, making them perfect for soups, stir-fries, stews, and spice blends. Ideal for long-term storage, Teja chilli combines intense heat with exceptional quality.",
+    features: [
+      { feature: 'Color', value: 'Deep red with a glossy finish' },
+      { feature: 'Skin', value: 'Thin yet firm, with fewer seeds' },
+      { feature: 'Aroma', value: 'Pungent, earthy fragrance' },
+      { feature: 'Shape', value: 'Pointed tip with medium-length body' },
+      { feature: 'Pungency', value: 'High, ideal for spicing up dishes' },
+      { feature: 'Processing', value: 'Sun-dried' },
+      { feature: 'Capsaicin Percentage', value: '0.589%' },
+      { feature: 'Length', value: '5-7 cm (2-3 inches)' },
+      { feature: 'Heat Level', value: '50,000 to 100,000 SHU' },
+      { feature: 'ASTA Color Value', value: '75-100' },
+      { feature: 'Moisture', value: '8-10%' }
+    ]
+  },
+  {
+    title: "334 S4/Sannam Dried Red Chilli",
+    description: "Guntur Sannam chilli, also known as S4, is renowned for its bright red color and moderate heat, perfect for enhancing both flavor and appearance in dishes. Grown in the rich soils of Andhra Pradesh's Guntur, Khammam, and Prakasam districts, this chilli is globally recognized for its consistent quality. With its thick skin, Guntur Sannam delivers bold flavor whether used as a powder or crushed, making it a top choice for spice blends, curries, and sauces.",
+    features: [
+      { feature: 'Color', value: 'Deep red, glossy texture' },
+      { feature: 'Skin', value: 'Medium-thick' },
+      { feature: 'Aroma', value: 'Mild, fruity & earthy undertone' },
+      { feature: 'Shape', value: 'Elongated and slight conical curve' },
+      { feature: 'Pungency', value: 'Moderate heat' },
+      { feature: 'Processing', value: 'Traditionally sun-dried' },
+      { feature: 'Capsaicin Percentage', value: '0.226' },
+      { feature: 'Length', value: '5-8 cm (2-3 inches)' },
+      { feature: 'Heat Level', value: '20,000 to 35,000 SH' },
+      { feature: 'ASTA Color Value', value: '60-80' },
+      { feature: 'Moisture', value: '10-12%' }
+    ]
+  },
+  {
+    title: "Bydgi Dried Red Chilli",
+    description: "Byadgi chilli is a premium variety known for its vibrant red color and mild heat, making it ideal for adding a deep red hue to dishes without intense spiciness. Grown in the fertile regions of Karnataka, Byadgi chillies are popular for making chilli powder, spice blends, and curry pastes. Their smooth texture and natural oils enhance the flavor and color of sauces, gravies, and seasonings. Favored by culinary professionals and home chefs alike, Byadgi chillies are a kitchen essential.Additionally, their color is utilized in the cosmetics industry for nail polish.",
+    features: [
+      { feature: 'Color', value: 'Bright red, with a deep, rich hue' },
+      { feature: 'Skin', value: 'Wrinkled and dry' },
+      { feature: 'Shape', value: 'Slightly bent, wrinkled skin' },
+      { feature: 'Aroma', value: 'Sweet aroma & fruity undertone' },
+      { feature: 'Pungency', value: 'Very mild heat' },
+      { feature: 'Processing', value: 'Naturally sun-dried' },
+      { feature: 'Capsaicin Percentage', value: '0.226%' },
+      { feature: 'Length', value: '12-15 cm (5-6 inches)' },
+      { feature: 'Heat Level', value: '8,000 to 15,000 SHU' },
+      { feature: 'ASTA Color Value', value: '100-160' },
+      { feature: 'Moisture', value: '10-12%' }
+    ]
+  },
+  {
+    title: "341 Dried Red Chilli",
+    description: "Guntur 341 chilli is a premium variety known for its bright red color and moderate heat, offering the perfect balance between spice and flavor. Grown in the renowned Guntur region of Andhra Pradesh, this chilli is praised for its consistent quality and rich flavor. Ideal for making powders, spice blends, and curries, Guntur 341 chilli adds vibrant color and aromatic heat to any dish. Popular among international buyers and widely used by masala and red chilli powder manufacturers, it's a top choice for authentic flavor and color in cooking.",
+    features: [
+      { feature: 'Color', value: 'Bright red with a smooth texture' },
+      { feature: 'Skin', value: 'Thin' },
+      { feature: 'Aroma', value: 'Mild and earthy' },
+      { feature: 'Shape', value: 'Long, slender with pointed tip' },
+      { feature: 'Pungency', value: 'Moderate' },
+      { feature: 'Processing', value: 'Typically sun-dried' },
+      { feature: 'Capsaicin Percentage', value: '0.226%' },
+      { feature: 'Length', value: '6-8 cm (2.5-3.5 inches)' },
+      { feature: 'Heat Level', value: '30,000 to 50,000 SHU' },
+      { feature: 'ASTA Color Value', value: '90-120' },
+      { feature: 'Moisture', value: '10-12%' }
+    ]
+  },
+  {
+    title: "No 5 Dried Red Chilli",
+    description: "Guntur No.5 chilli is a premium variety celebrated for its vibrant red color and moderate to high heat, perfect for those who enjoy bold flavors. Grown in the fertile Guntur region of Andhra Pradesh, this chilli is known for its consistent quality and exceptional taste. Ideal for making chilli powder, spice blends, and sauces, Guntur No.5 chilli enhances both flavor and appearance in dishes. Its robust aroma and deep red color make it a favorite among chefs and food enthusiasts worldwide. Choose Guntur No.5 chilli to add a flavorful kick to your cooking, with its dark red color and medium size.",
+    features: [
+      { feature: 'Color', value: 'Bright red with a glossy finish' },
+      { feature: 'Skin', value: 'Smooth, thin, and firm texture' },
+      { feature: 'Aroma', value: 'Strong, spicy, smoky' },
+      { feature: 'Shape', value: 'Long, pointed and slender' },
+      { feature: 'Pungency', value: 'Moderate heat' },
+      { feature: 'Processing', value: 'Sun-dried for enhanced flavor' },
+      { feature: 'Capsaicin Percentage', value: '0.226%' },
+      { feature: 'Length', value: '10-15 cm (4-6 inches)' },
+      { feature: 'Heat Level', value: '15,000 to 25,000 SHU' },
+      { feature: 'ASTA Color Value', value: '80-120' },
+      { feature: 'Moisture', value: '10-12%' }
+    ]
+  },
+  {
+    title: "Armoor Dried Red Chilli",
+    description: "The Armoor chilli is known for its deep red color and balanced heat, the Armoor chilli is a premium variety that enhances both the appearance and flavor of your dishes. Sourced from the fertile soils of Armoor, Telangana, this chilli is celebrated for its consistent quality and rich taste. Ideal for creating high-quality chilli powders, spice blends, and sauces, Armoor chillies are a favorite among chefs and culinary enthusiasts. Its vibrant color and moderate heat make it a top choice for those seeking to elevate their culinary creations with both visual appeal and robust flavor.",
+    features: [
+      { feature: 'Color', value: 'Bright red with high color retention' },
+      { feature: 'Skin', value: 'Smooth, thin skin' },
+      { feature: 'Shape', value: 'Medium size, curved, pointed tip' },
+      { feature: 'Aroma', value: 'Spicy & smoky undertone' },
+      { feature: 'Pungency', value: 'High' },
+      { feature: 'Processing', value: 'Sun-dried' },
+      { feature: 'Capsaicin Percentage', value: '0.3%' },
+      { feature: 'Length', value: '6-9 cm (2.3-3.5 inches)' },
+      { feature: 'Heat Level', value: '30,000 to 50,000 SHU' },
+      { feature: 'ASTA Color Value', value: '60-80' },
+      { feature: 'Moisture', value: '8-10%' }
+    ]
+  },
+  {
+    title: "Devanur Deluxe (DD) Dried Red Chilli",
+    description: "The DD Chilli is a premium variety renowned for its intense heat and vibrant red color, ideal for those who crave bold and spicy flavors. Cultivated in the rich soils of Kurnool, Telangana, and Andhra Pradesh, this chilli is celebrated for its consistent quality and fiery heat. Perfect for spice blends, chilli powders, and hot sauces, the DD Chilli stands out with its dark red, semi-wrinkled appearance and robust flavor. It contains fewer seeds than other varieties and retains its thick, red, and spicy qualities even when crushed, making it a top choice for adding a powerful kick to your dishes.",
+    features: [
+      { feature: 'Color', value: 'Dark red' },
+      { feature: 'Skin', value: 'Thick, slightly wrinkled skin' },
+      { feature: 'Shape', value: 'Medium-sized, pointed shape' },
+      { feature: 'Aroma', value: 'Strong with a hint of sweetness' },
+      { feature: 'Pungency', value: 'Mild to moderate' },
+      { feature: 'Processing', value: 'Sun-dried' },
+      { feature: 'Capsaicin Percentage', value: '0.5%' },
+      { feature: 'Length', value: '8-12 cm (3-4.7 inches)' },
+      { feature: 'Heat Level', value: '10,000 to 20,000 SHU' },
+      { feature: 'ASTA Color Value', value: '80-100' },
+      { feature: 'Moisture', value: '10-12%' }
+    ]
+  }
+];
+
+const slugMap = {
+  'teja': products[0],
+  '334-sannam': products[1],
+  'byadgi': products[2],
+  '341': products[3],
+  'no5': products[4],
+  'armoor': products[5],
+  'dd': products[6]
+};
+
+  return Object.keys(slugMap).map(slug => ({
+    params: { slug },
+    props: {
+      variety: slugMap[slug].title,
+      title: slugMap[slug].title + ' - Guntur | Devika Exim',
+      description: slugMap[slug].description,
+      canonical: 'https://devikaexim.in/' + slug + '.html',
+      features: slugMap[slug].features
+    }
+  }));
+}
+
+const data = Astro.props;
+
+const productSchema = {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  name: data.variety,
+  description: data.description,
+  url: data.canonical,
+  brand: {
+    "@type": "Brand",
+    name: "Devika Exim"
+  },
+  additionalProperty: data.features.map((f) => ({
+    "@type": "PropertyValue",
+    name: f.feature,
+    value: f.value
+  }))
+};
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Home",
+      item: "https://devikaexim.in/"
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Product Description",
+      item: "https://devikaexim.in/products.html"
+    },
+    {
+      "@type": "ListItem",
+      position: 3,
+      name: data.variety,
+      item: data.canonical
+    }
+  ]
+};
+---
+
+<BaseLayout
+  title={data.title}
+  description={data.description}
+  canonical={data.canonical}
+>
+  <section class="variety-page">
+    <div class="variety-hero">
+      <span class="variety-badge">{data.variety}</span>
+      <h1>{data.title}</h1>
+      <p class="variety-lead">{data.description}</p>
+    </div>
+
+    <div class="variety-container">
+      {data.features.length > 0 && (
+        <div class="variety-specs">
+          <h2>Specifications</h2>
+          <div class="specs-grid">
+            {data.features.map((f, i) => (
+              <div class="spec-item" key={i}>
+                <span class="spec-label">{f.feature}</span>
+                <span class="spec-value">{f.value}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div class="variety-cta">
+        <h2>Buy {data.variety} Chillies</h2>
+        <p>We supply premium {data.variety} dried red chillies in bulk quantities. Sourced directly from Guntur Mirchi Market, available for wholesale and export with quality certification.</p>
+        <div class="cta-buttons">
+          <a href="https://wa.me/918341339975" target="_blank" rel="noreferrer" class="btn btn-primary">Enquire on WhatsApp</a>
+          <a href="/products.html" class="btn btn-secondary">View All Varieties</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script type="application/ld+json" is:inline>
+    {JSON.stringify(productSchema)}
+  </script>
+
+  <script type="application/ld+json" is:inline>
+    {JSON.stringify(breadcrumbSchema)}
+  </script>
+
+  <style>
+    .variety-page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 48px 24px;
+    }
+    .variety-hero {
+      text-align: center;
+      padding: 48px 24px;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d1f1f 50%, #1a1a1a 100%);
+      border-radius: 16px;
+      margin-bottom: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+    .variety-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(209, 24, 24, 0.15) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .variety-badge {
+      display: inline-block;
+      padding: 6px 16px;
+      background: rgba(209, 24, 24, 0.2);
+      color: #ff6b6b;
+      border: 1px solid rgba(209, 24, 24, 0.4);
+      border-radius: 100px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 1;
+    }
+    .variety-hero h1 {
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      font-weight: 800;
+      color: #fff;
+      margin: 0 0 12px;
+      position: relative;
+      z-index: 1;
+    }
+    .variety-lead {
+      font-size: 1.1rem;
+      color: #cbd5e1;
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.7;
+      position: relative;
+      z-index: 1;
+    }
+    .variety-container {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+    .variety-specs {
+      background: #fff;
+      border-radius: 12px;
+      padding: 32px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .variety-specs h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin: 0 0 20px;
+    }
+    .specs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px;
+    }
+    .spec-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 14px;
+      background: #f9fafb;
+      border-radius: 8px;
+      border-left: 3px solid #D21818;
+    }
+    .spec-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #6b7280;
+    }
+    .spec-value {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #1a1a1a;
+    }
+    .variety-cta {
+      background: #fff;
+      border-radius: 12px;
+      padding: 32px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      text-align: center;
+    }
+    .variety-cta h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin: 0 0 12px;
+    }
+    .variety-cta p {
+      color: #4b5563;
+      max-width: 700px;
+      margin: 0 auto 24px;
+      line-height: 1.7;
+    }
+    .cta-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 28px;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.15s;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: #D21818;
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: #b10e0e;
+      transform: translateY(-1px);
+      color: #fff;
+    }
+    .btn-secondary {
+      background: #374151;
+      color: #fff;
+    }
+    .btn-secondary:hover {
+      background: #1f2937;
+      transform: translateY(-1px);
+      color: #fff;
+    }
+    @media (max-width: 768px) {
+      .variety-hero {
+        padding: 32px 16px;
+      }
+      .variety-specs, .variety-cta {
+        padding: 24px;
+      }
+      .specs-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</BaseLayout>

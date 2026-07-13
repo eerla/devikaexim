@@ -1,0 +1,248 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+interface Props {
+  variety: string;
+  title: string;
+  description: string;
+  canonical: string;
+  features?: Array<{feature: string; value: string}>;
+}
+
+const { variety, title, description, canonical, features = [] } = Astro.props;
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={canonical}
+>
+  <section class="variety-page">
+    <div class="variety-hero">
+      <span class="variety-badge">{variety}</span>
+      <h1>{title}</h1>
+      <p class="variety-lead">{description}</p>
+    </div>
+
+    <div class="variety-container">
+      {features.length > 0 && (
+        <div class="variety-specs">
+          <h2>Specifications</h2>
+          <div class="specs-grid">
+            {features.map((f, i) => (
+              <div class="spec-item" key={i}>
+                <span class="spec-label">{f.feature}</span>
+                <span class="spec-value">{f.value}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div class="variety-cta">
+        <h2>Buy {variety} Chillies</h2>
+        <p>We supply premium {variety} dried red chillies in bulk quantities. Sourced directly from Guntur Mirchi Market, available for wholesale and export with quality certification.</p>
+        <div class="cta-buttons">
+          <a href="https://wa.me/918341339975" target="_blank" rel="noreferrer" class="btn btn-primary">Enquire on WhatsApp</a>
+          <a href="/products.html" class="btn btn-secondary">View All Varieties</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script type="application/ld+json" is:inline>
+    {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      "name": "{title}",
+      "description": "{description}",
+      "category": "Dried Red Chillies",
+      "brand": {
+        "@type": "Brand",
+        "name": "Devika Exim"
+      },
+      "offers": {
+        "@type": "Offer",
+        "priceCurrency": "INR",
+        "availability": "https://schema.org/InStock",
+        "seller": {
+          "@type": "Organization",
+          "name": "Devika Exim"
+        }
+      },
+      "additionalProperty": [
+        {features.map((f, i) => ({
+          "@type": "PropertyValue",
+          "name": f.feature,
+          "value": f.value
+        })).join(',')}
+      ]
+    }
+  </script>
+
+  <style>
+    .variety-page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 48px 24px;
+    }
+    .variety-hero {
+      text-align: center;
+      padding: 48px 24px;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d1f1f 50%, #1a1a1a 100%);
+      border-radius: 16px;
+      margin-bottom: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+    .variety-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(209, 24, 24, 0.15) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .variety-badge {
+      display: inline-block;
+      padding: 6px 16px;
+      background: rgba(209, 24, 24, 0.2);
+      color: #ff6b6b;
+      border: 1px solid rgba(209, 24, 24, 0.4);
+      border-radius: 100px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 1;
+    }
+    .variety-hero h1 {
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      font-weight: 800;
+      color: #fff;
+      margin: 0 0 12px;
+      position: relative;
+      z-index: 1;
+    }
+    .variety-lead {
+      font-size: 1.1rem;
+      color: #cbd5e1;
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.7;
+      position: relative;
+      z-index: 1;
+    }
+    .variety-container {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+    .variety-specs {
+      background: #fff;
+      border-radius: 12px;
+      padding: 32px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .variety-specs h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin: 0 0 20px;
+    }
+    .specs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px;
+    }
+    .spec-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 14px;
+      background: #f9fafb;
+      border-radius: 8px;
+      border-left: 3px solid #D21818;
+    }
+    .spec-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #6b7280;
+    }
+    .spec-value {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #1a1a1a;
+    }
+    .variety-cta {
+      background: #fff;
+      border-radius: 12px;
+      padding: 32px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      text-align: center;
+    }
+    .variety-cta h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin: 0 0 12px;
+    }
+    .variety-cta p {
+      color: #4b5563;
+      max-width: 700px;
+      margin: 0 auto 24px;
+      line-height: 1.7;
+    }
+    .cta-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 28px;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.15s;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: #D21818;
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: #b10e0e;
+      transform: translateY(-1px);
+      color: #fff;
+    }
+    .btn-secondary {
+      background: #374151;
+      color: #fff;
+    }
+    .btn-secondary:hover {
+      background: #1f2937;
+      transform: translateY(-1px);
+      color: #fff;
+    }
+    @media (max-width: 768px) {
+      .variety-hero {
+        padding: 32px 16px;
+      }
+      .variety-specs, .variety-cta {
+        padding: 24px;
+      }
+      .specs-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</BaseLayout>

@@ -22,6 +22,19 @@ const API_URL = import.meta.env.PUBLIC_API_URL || '';
   <meta property="og:url" content={canonical} />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Devika Exim" />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={canonical} />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://devikaexim.in/assets/images/og-image.png" />
+  <link rel="alternate" hreflang="en" href="https://devikaexim.in/" />
+  <link rel="alternate" hreflang="hi" href="https://devikaexim.in/" />
+  <link rel="alternate" hreflang="te" href="https://devikaexim.in/" />
+  <link rel="alternate" hreflang="en-IN" href="https://devikaexim.in/" />
+  <link rel="alternate" hreflang="x-default" href="https://devikaexim.in/" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="preconnect" href="https://www.google-analytics.com" />
@@ -33,6 +46,50 @@ const API_URL = import.meta.env.PUBLIC_API_URL || '';
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
   <link rel="stylesheet" href="/assets/css/styles.css" />
   <link rel="stylesheet" href="/assets/css/overrides.css" />
+
+  <script type="application/ld+json" is:inline>
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Devika Exim",
+      "url": "https://devikaexim.in",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://devikaexim.in/?s={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+  </script>
+
+  <script type="application/ld+json" is:inline>
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Devika Exim",
+      "url": "https://devikaexim.in",
+      "logo": "https://devikaexim.in/assets/images/logo-no-bg.png",
+      "description": "Premium dried red chillies and chilli powder exporters from Guntur, Andhra Pradesh.",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Guntur",
+        "addressRegion": "Andhra Pradesh",
+        "addressCountry": "IN"
+      },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+91-8341339975",
+        "contactType": "sales",
+        "areaServed": "IN",
+        "availableLanguage": ["English", "Hindi", "Telugu"]
+      },
+      "sameAs": [
+        "https://wa.me/918341339975"
+      ]
+    }
+  </script>
 
   <!-- Google Tag Manager -->
   <script is:inline>
