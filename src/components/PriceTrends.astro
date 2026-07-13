@@ -14,7 +14,9 @@ const API_URL = import.meta.env.PUBLIC_API_URL || '';
   </div>
 </section>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"
+        onerror="this.onerror=null; this.src='https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js';"
+></script>
 <script is:inline>
   (function() {
     var API_URL = window.API_URL || '';
@@ -43,23 +45,43 @@ const API_URL = import.meta.env.PUBLIC_API_URL || '';
       }
     }
 
+    function waitForChart(callback, maxWait) {
+      maxWait = maxWait || 5000;
+      var start = Date.now();
+      function check() {
+        if (typeof Chart !== 'undefined') {
+          callback();
+        } else if (Date.now() - start < maxWait) {
+          setTimeout(check, 100);
+        } else {
+          console.error('Chart.js failed to load after waiting');
+        }
+      }
+      check();
+    }
+
     var cacheKey = 'devikaexim:trends:all';
     var cached = getCached(cacheKey, 3600000); // 1 hour
     if (cached) {
-      renderChart(cached);
+      waitForChart(function() { renderChart(cached); });
     }
 
     fetch(API_URL + '/api/prices/trends')
       .then(function(r) { return r.json(); })
       .then(function(resp) {
         setCached(cacheKey, resp);
-        renderChart(resp);
+        waitForChart(function() { renderChart(resp); });
       })
       .catch(function(err) {
         console.error('Failed to load trends:', err);
       });
 
+    var currentChart = null;
+
     function renderChart(resp) {
+      if (window.__devikaeximTrendsRendered) return;
+      window.__devikaeximTrendsRendered = true;
+
       var raw = resp.data || [];
       if (!raw.length) return;
 
@@ -96,7 +118,11 @@ const API_URL = import.meta.env.PUBLIC_API_URL || '';
         };
       });
 
-      new Chart(document.getElementById('priceChart'), {
+      var ctx = document.getElementById('priceChart');
+      if (currentChart) {
+        currentChart.destroy();
+      }
+      currentChart = new Chart(ctx, {
         type: 'line',
         data: { labels: uniqueMonths, datasets: datasets },
         options: {
