@@ -1,6 +1,7 @@
 [
   {
     "title": "Teja S17 Dried Red Chilli",
+    "slug": "teja",
     "description": "Teja chilli, one of the hottest varieties available, is primarily grown in southern India, near the renowned Guntur Mirchi Market. Known globally as S17 Teja chilli, it is highly sought after by international buyers. Our Teja chillies are offered in stemless, with stem, and powdered forms, making them perfect for soups, stir-fries, stews, and spice blends. Ideal for long-term storage, Teja chilli combines intense heat with exceptional quality.",
     "images": [
       "/assets/images/teja1.jpeg",
@@ -22,6 +23,7 @@
   },
   {
     "title": "334 S4/Sannam Dried Red Chilli",
+    "slug": "334-sannam",
     "description": "Guntur Sannam chilli, also known as S4, is renowned for its bright red color and moderate heat, perfect for enhancing both flavor and appearance in dishes. Grown in the rich soils of Andhra Pradesh's Guntur, Khammam, and Prakasam districts, this chilli is globally recognized for its consistent quality. With its thick skin, Guntur Sannam delivers bold flavor whether used as a powder or crushed, making it a top choice for spice blends, curries, and sauces.",
     "images": [
       "/assets/images/334.jpeg",
@@ -43,6 +45,7 @@
   },
   {
     "title": "Bydgi Dried Red Chilli",
+    "slug": "byadgi",
     "description": "Byadgi chilli is a premium variety known for its vibrant red color and mild heat, making it ideal for adding a deep red hue to dishes without intense spiciness. Grown in the fertile regions of Karnataka, Byadgi chillies are popular for making chilli powder, spice blends, and curry pastes. Their smooth texture and natural oils enhance the flavor and color of sauces, gravies, and seasonings. Favored by culinary professionals and home chefs alike, Byadgi chillies are a kitchen essential.Additionally, their color is utilized in the cosmetics industry for nail polish.",
     "images": [
       "/assets/images/bydgi.jpeg",
@@ -64,6 +67,7 @@
   },
   {
     "title": "341 Dried Red Chilli",
+    "slug": "341",
     "description": "Guntur 341 chilli is a premium variety known for its bright red color and moderate heat, offering the perfect balance between spice and flavor. Grown in the renowned Guntur region of Andhra Pradesh, this chilli is praised for its consistent quality and rich flavor. Ideal for making powders, spice blends, and curries, Guntur 341 chilli adds vibrant color and aromatic heat to any dish. Popular among international buyers and widely used by masala and red chilli powder manufacturers, it's a top choice for authentic flavor and color in cooking.",
     "images": [
       "/assets/images/341.png",
@@ -85,6 +89,7 @@
   },
   {
     "title": "No 5 Dried Red Chilli",
+    "slug": "no5",
     "description": "Guntur No.5 chilli is a premium variety celebrated for its vibrant red color and moderate to high heat, perfect for those who enjoy bold flavors. Grown in the fertile Guntur region of Andhra Pradesh, this chilli is known for its consistent quality and exceptional taste. Ideal for making chilli powder, spice blends, and sauces, Guntur No.5 chilli enhances both flavor and appearance in dishes. Its robust aroma and deep red color make it a favorite among chefs and food enthusiasts worldwide. Choose Guntur No.5 chilli to add a flavorful kick to your cooking, with its dark red color and medium size.",
     "images": [
       "/assets/images/No.5.jpeg",
@@ -106,6 +111,7 @@
   },
   {
     "title": "Armoor Dried Red Chilli",
+    "slug": "armoor",
     "description": "The Armoor chilli is known for its deep red color and balanced heat, the Armoor chilli is a premium variety that enhances both the appearance and flavor of your dishes. Sourced from the fertile soils of Armoor, Telangana, this chilli is celebrated for its consistent quality and rich taste. Ideal for creating high-quality chilli powders, spice blends, and sauces, Armoor chillies are a favorite among chefs and culinary enthusiasts. Its vibrant color and moderate heat make it a top choice for those seeking to elevate their culinary creations with both visual appeal and robust flavor.",
     "images": [
       "/assets/images/armoor.jpeg",
@@ -127,6 +133,7 @@
   },
   {
     "title": "Devanur Deluxe (DD) Dried Red Chilli",
+    "slug": "dd",
     "description": "The DD Chilli is a premium variety renowned for its intense heat and vibrant red color, ideal for those who crave bold and spicy flavors. Cultivated in the rich soils of Kurnool, Telangana, and Andhra Pradesh, this chilli is celebrated for its consistent quality and fiery heat. Perfect for spice blends, chilli powders, and hot sauces, the DD Chilli stands out with its dark red, semi-wrinkled appearance and robust flavor. It contains fewer seeds than other varieties and retains its thick, red, and spicy qualities even when crushed, making it a top choice for adding a powerful kick to your dishes.",
     "images": [
       "/assets/images/dd1.jpeg",
@@ -148,6 +155,7 @@
   },
   {
     "title": "Red Chilli Powder",
+    "slug": "chilli-powder",
     "description": "Our red chilli powder is made from carefully selected, high-quality chillies, offering a perfect balance of vibrant color and bold heat. Whether you're looking to spice up your curries, marinades, or sauces, this finely ground powder brings rich flavor and a fiery kick to every dish. Known for its consistent quality and potency, it's a must-have in any kitchen. Ideal for both home cooks and chefs, our red chilli powder enhances not just the taste, but also the visual appeal of your food.",
     "images": [
       "/assets/images/cp.jpg",
@@ -169,6 +177,7 @@
   },
   {
     "title": "Turmeric",
+    "slug": "turmeric",
     "description": "Turmeric is a vibrant yellow-orange spice known for its earthy flavor and numerous health benefits. Grown primarily in India, turmeric is a key ingredient in many culinary dishes and traditional medicines. It is valued for its anti-inflammatory properties and is often used in powdered form for cooking, as well as in supplements and skincare products.",
     "images": [
       "/assets/images/turmeric1.jfif",
@@ -190,6 +199,7 @@
   },
   {
     "title": "Coriander Seeds",
+    "slug": "coriander-seeds",
     "description": "Coriander seeds are the dried seeds of the coriander plant, known for their warm, nutty, and citrusy flavor. Widely used in cooking and traditional medicine, they are valued for their digestive and anti-inflammatory properties. Coriander seeds are commonly ground into a spice or used whole in various cuisines around the world.",
     "images": [
       "/assets/images/dhaniya1.jfif",
@@ -211,6 +221,7 @@
   },
   {
     "title": "Chilli Flakes",
+    "slug": "chilli-flakes",
     "description": "Chilli flakes are crushed dried red chillies, known for their spicy heat and vibrant color. Commonly used as a condiment or spice in various cuisines, they add a fiery kick to dishes. Chilli flakes are valued for their capsaicin content, which provides heat and potential health benefits such as metabolism boosting and pain relief.",
     "images": [
       "/assets/images/chilliflakes1.jfif",

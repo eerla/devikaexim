@@ -50,6 +50,11 @@ const specs = features.slice(4);
         onclick="zforms_open_window('https://forms.zohopublic.com/gunturredchillies1/form/Contactus/formperma/dRNXAbE0AMFcrUjQhR4AfgxQx3IIyKT0sUfu1ZbNWzY', 648, 700); return false;">
         Enquire Now
       </button>
+      {product.slug && (
+        <a href={`/${product.slug}.html`} class="enquire-btn" style="background:#374151; margin-top: 8px; display: inline-flex;">
+          View Details
+        </a>
+      )}
     </div>
   </div>
 </article>
