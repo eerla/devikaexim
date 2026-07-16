@@ -29,6 +29,9 @@ gcloud run deploy devikaexim-market-api \
   --allow-unauthenticated \
   --set-env-vars GCP_PROJECT_ID=devikaexim,BQ_DATASET=market,BQ_TABLE=chilli_prices \
   --set-secrets GCP_KEY_PATH=projects/devikaexim/secrets/bq-key:latest
+
+
+   gcloud run deploy devikaexim-market-api --source . --region asia-south1 --allow-unauthenticated --set-env-vars "GCP_PROJECT_ID=devikaexim,BQ_DATASET=market,BQ_TABLE=chilli_prices" --set-secrets OPENAI_API_KEY=openai-api-key:latest
 ```
 
 ## Endpoints

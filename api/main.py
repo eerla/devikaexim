@@ -626,6 +626,79 @@ Raw text:
         raise HTTPException(status_code=500, detail=f"LLM parse error: {str(e)}")
 
 
+class ImageParseRequest(BaseModel):
+    image_base64: str
+    filename: str = ""
+
+
+@app.post("/api/reports/parse-image")
+def parse_report_image(req: ImageParseRequest):
+    if not OPENAI_API_KEY or not OpenAI:
+        raise HTTPException(status_code=500, detail="LLM parsing not configured")
+
+    try:
+        for _key in ['HTTP_PROXY', 'HTTPS_PROXY', 'OPENAI_PROXY', 'ALL_PROXY', 'NO_PROXY']:
+            os.environ.pop(_key, None)
+        client = OpenAI(api_key=OPENAI_API_KEY)
+
+        prompt = """Read this Guntur chilli market report image and return ONLY valid JSON (no markdown) with this exact schema:
+{
+  "report_date": "DD.MM.YYYY",
+  "market": "Guntur",
+  "state": "Andhra Pradesh",
+  "arrivals": {"ac": "40,000 bags approx", "non_ac": "..."},
+  "prices": [
+    {"category": "AC", "variety": "TEJA", "min": 18000, "max": 22000, "mid": 20000, "note": "General market"}
+  ],
+  "summary": ["Mostly medium/medium best"],
+  "market_status": "steady"
+}
+Rules:
+- report_date format DD.MM.YYYY
+- prices in RUPEES PER QUINTAL (multiply any Rs/kg value by 100)
+- category: "AC" or "NON AC"
+- variety normalized to standard names (TEJA, 341, ARMOUR, 334, BYADGI, DD, NO 5, 2043, BULLET, CLASSIC, SEED, FATKI, etc.)
+- note: extract notes like "General market", "Deluxe Qlts not available", etc.
+- summary: extract market summary points
+- market_status: one of "steady", "weak", "up", "down"
+"""
+
+        mime = 'image/jpeg'
+        if req.filename.lower().endswith('.png'):
+            mime = 'image/png'
+        elif req.filename.lower().endswith('.webp'):
+            mime = 'image/webp'
+
+        response = client.responses.create(
+            model="gpt-4o-mini",
+            input=[
+                {"role": "system", "content": "You are a market report image parser. Return only valid JSON, no markdown, no explanations."},
+                {"role": "user", "content": [
+                    {"type": "input_text", "text": prompt},
+                    {"type": "input_image", "image_url": f"data:{mime};base64,{req.image_base64}"},
+                ]},
+            ],
+            temperature=0,
+        )
+
+        content = response.output[0].content[0].text.strip()
+        if content.startswith("```"):
+            content = content.split("```")[1]
+            if content.lower().startswith("json"):
+                content = content[4:]
+            content = content.strip()
+
+        parsed = json.loads(content)
+        return parsed
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Image parse error: {str(e)}")
+
+
 @app.get("/api/prices/history")
 def get_price_history(variety: str = 'Teja', days: int = 90):
     cache_key = f"history:{variety}:{days}"
