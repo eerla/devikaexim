@@ -21,6 +21,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <button id="publishBtn" class="publish-btn" style="display: none;">Publish to Website</button>
         <button type="button" class="clear-btn" id="clearBtn">Clear</button>
       </div>
+
+      <div class="admin-form">
+        <label for="imgInput" class="img-label">Or upload / paste / drop a report image (PNG/JPG):</label>
+        <input type="file" id="imgInput" accept="image/*" />
+        <div class="admin-actions">
+          <button type="button" class="parse-img-btn" id="parseImgBtn">Parse Image</button>
+        </div>
+        <p class="admin-hint">Tip: you can also paste an image from clipboard (Ctrl/Cmd+V) or drag &amp; drop it anywhere on this page.</p>
+      </div>
     </div>
 
     <div id="errorBox" class="error-box" style="display: none;"></div>
@@ -175,6 +184,127 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         publishBtn.textContent = 'Publish to Website';
       });
     });
+
+    function readFileAsBase64(file) {
+      return new Promise(function (resolve, reject) {
+        var reader = new FileReader();
+        reader.onload = function () { resolve(reader.result.split(',')[1]); };
+        reader.onerror = function () { reject(reader.error); };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function renderParsed(parsed) {
+      currentJson = JSON.stringify(parsed, null, 2);
+      window.currentRawText = '';
+
+      document.getElementById('errorBox').style.display = 'none';
+      document.getElementById('previewArea').style.display = 'block';
+      document.getElementById('publishBtn').style.display = 'inline-block';
+
+      document.getElementById('pvDate').textContent = parsed.report_date || '—';
+      document.getElementById('pvMarket').textContent = (parsed.market || 'Guntur') + ', ' + (parsed.state || 'Andhra Pradesh');
+      document.getElementById('pvArrivals').textContent = 'Non-AC: ' + (parsed.arrivals && parsed.arrivals.non_ac ? parsed.arrivals.non_ac : '—') + ' | AC: ' + (parsed.arrivals && parsed.arrivals.ac ? parsed.arrivals.ac : '—');
+      document.getElementById('pvPrices').textContent = (parsed.prices ? parsed.prices.length : 0) + ' varieties';
+      document.getElementById('pvStatus').textContent = parsed.market_status || '—';
+      document.getElementById('pvSummary').textContent = (parsed.summary ? parsed.summary.length : 0) + ' items';
+
+      var tbody = document.getElementById('pvTableBody');
+      tbody.innerHTML = '';
+      if (parsed.prices && parsed.prices.length) {
+        parsed.prices.forEach(function (p) {
+          var tr = document.createElement('tr');
+          tr.innerHTML = '<td>' + (p.category || '') + '</td><td>' + (p.variety || '') + '</td><td>₹' + (p.min || 0).toLocaleString() + '</td><td>₹' + (p.max || 0).toLocaleString() + '</td><td>' + (p.note || '—') + '</td>';
+          tbody.appendChild(tr);
+        });
+      } else {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 24px; color: #6b7280;">No prices found</td></tr>';
+      }
+
+      document.getElementById('pvJson').textContent = currentJson;
+    }
+
+    async function parseImageFile(file) {
+      var errorBox = document.getElementById('errorBox');
+      var parseImgBtn = document.getElementById('parseImgBtn');
+
+      if (!file) {
+        errorBox.textContent = 'Please choose, paste, or drop an image first.';
+        errorBox.style.display = 'block';
+        return;
+      }
+
+      var base64;
+      try {
+        base64 = await readFileAsBase64(file);
+      } catch (err) {
+        errorBox.textContent = 'Could not read the image file.';
+        errorBox.style.display = 'block';
+        return;
+      }
+
+      errorBox.style.display = 'none';
+      parseImgBtn.disabled = true;
+      parseImgBtn.textContent = 'Reading image…';
+
+      fetch(API_URL + '/api/reports/parse-image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image_base64: base64, filename: file.name || 'image.png' })
+      })
+        .then(function (r) { return r.json(); })
+        .then(renderParsed)
+        .catch(function (e) {
+          errorBox.textContent = 'Image parse error: ' + (e.message || e);
+          errorBox.style.display = 'block';
+        })
+        .finally(function () {
+          parseImgBtn.disabled = false;
+          parseImgBtn.textContent = 'Parse Image';
+        });
+    }
+
+    document.getElementById('parseImgBtn').addEventListener('click', function () {
+      var fileInput = document.getElementById('imgInput');
+      parseImageFile(fileInput.files && fileInput.files.length ? fileInput.files[0] : null);
+    });
+
+    document.getElementById('imgInput').addEventListener('change', function (e) {
+      if (e.target.files && e.target.files.length) parseImageFile(e.target.files[0]);
+    });
+
+    // Paste an image from clipboard (Ctrl/Cmd+V) anywhere on the page
+    document.addEventListener('paste', function (e) {
+      var items = (e.clipboardData && e.clipboardData.items) || [];
+      for (var i = 0; i < items.length; i++) {
+        if (items[i].type && items[i].type.indexOf('image/') === 0) {
+          var blob = items[i].getAsFile();
+          if (blob) {
+            var dt = new DataTransfer();
+            dt.items.add(blob);
+            document.getElementById('imgInput').files = dt.files;
+            parseImageFile(blob);
+          }
+          break;
+        }
+      }
+    });
+
+    // Drag & drop an image anywhere on the page
+    window.addEventListener('dragover', function (e) { e.preventDefault(); });
+    window.addEventListener('drop', function (e) {
+      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) {
+        var f = e.dataTransfer.files[0];
+        if (f && f.type && f.type.indexOf('image/') === 0) {
+          e.preventDefault();
+          var dt = new DataTransfer();
+          dt.items.add(f);
+          document.getElementById('imgInput').files = dt.files;
+          parseImageFile(f);
+        }
+      }
+    });
+
 
     document.getElementById('clearBtn').addEventListener('click', function () {
       document.getElementById('raw').value = '';
