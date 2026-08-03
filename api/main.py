@@ -23,6 +23,7 @@ except ImportError:
 PROJECT_ID = os.getenv("GCP_PROJECT_ID", "devikaexim")
 DATASET_ID = os.getenv("BQ_DATASET", "market")
 TABLE_ID = os.getenv("BQ_TABLE", "chilli_prices")
+CHILLI_PRICES_VIEW = "chilli_prices_clean"
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 
 # ─── Simple in-memory cache ──────────────────────────────────────────────────
@@ -271,7 +272,7 @@ def write_report(client: bigquery.Client, report: Dict[str, Any]) -> int:
     if report['prices']:
         for price in report['prices']:
             rows_to_insert.append({
-                'report_date': report['report_date'],
+                'report_date': normalize_report_date(report['report_date']),
                 'market': report['market'],
                 'state': report['state'],
                 'arrivals': arrivals_str,
@@ -287,7 +288,7 @@ def write_report(client: bigquery.Client, report: Dict[str, Any]) -> int:
             })
         for s in report.get('summary', []):
             rows_to_insert.append({
-                'report_date': report['report_date'],
+                'report_date': normalize_report_date(report['report_date']),
                 'market': report['market'],
                 'state': report['state'],
                 'arrivals': arrivals_str,
@@ -303,7 +304,7 @@ def write_report(client: bigquery.Client, report: Dict[str, Any]) -> int:
             })
     else:
         rows_to_insert.append({
-            'report_date': report['report_date'],
+            'report_date': normalize_report_date(report['report_date']),
             'market': report['market'],
             'state': report['state'],
             'arrivals': arrivals_str,
@@ -398,8 +399,42 @@ def write_historical_report(client: bigquery.Client, report: Dict[str, Any]) -> 
     return len(rows_to_insert)
 
 
+def normalize_report_date(date_str: str) -> str:
+    if not date_str:
+        return date_str
+    for fmt in ('%d.%m.%Y', '%d-%m-%Y', '%Y-%m-%d', '%m.%d.%Y'):
+        try:
+            return datetime.strptime(date_str, fmt).strftime('%Y-%m-%d')
+        except ValueError:
+            continue
+    return date_str
+
+
 def fetch_latest_prices(client: bigquery.Client) -> dict:
     query = f"""
+        WITH normalized AS (
+          SELECT
+            report_date,
+            market,
+            state,
+            arrivals,
+            category,
+            variety,
+            min_price,
+            max_price,
+            mid_price,
+            note,
+            market_status,
+            summary_text,
+            CASE
+              WHEN SAFE.PARSE_DATE('%Y-%m-%d', report_date) IS NOT NULL THEN SAFE.PARSE_DATE('%Y-%m-%d', report_date)
+              WHEN SAFE.PARSE_DATE('%d.%m.%Y', report_date) IS NOT NULL THEN SAFE.PARSE_DATE('%d.%m.%Y', report_date)
+              WHEN SAFE.PARSE_DATE('%d-%m-%Y', report_date) IS NOT NULL THEN SAFE.PARSE_DATE('%d-%m-%Y', report_date)
+              WHEN SAFE.PARSE_DATE('%m.%d.%Y', report_date) IS NOT NULL THEN SAFE.PARSE_DATE('%m.%d.%Y', report_date)
+              ELSE NULL
+            END AS parsed_date
+          FROM `{PROJECT_ID}.{DATASET_ID}.{CHILLI_PRICES_VIEW}`
+        )
         SELECT
           report_date,
           market,
@@ -413,9 +448,9 @@ def fetch_latest_prices(client: bigquery.Client) -> dict:
           note,
           market_status,
           summary_text
-        FROM `{PROJECT_ID}.{DATASET_ID}.{TABLE_ID}`
-        WHERE report_date = (
-          SELECT MAX(report_date) FROM `{PROJECT_ID}.{DATASET_ID}.{TABLE_ID}`
+        FROM normalized
+        WHERE parsed_date = (
+          SELECT MAX(parsed_date) FROM normalized
         )
         ORDER BY category, variety
     """
